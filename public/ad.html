@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrueVibe Ads – Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --bg:#0b0d11;--surface:#13151a;--surface-2:#1c1f27;--surface-3:#242832;
+            --border:rgba(255,255,255,0.08);--border-hover:rgba(255,255,255,0.16);
+            --text:#eaedf2;--text-muted:#6b7280;--text-secondary:#9ca3af;
+            --accent:#1d9bf0;--accent-glow:rgba(29,155,240,0.25);--accent-hover:#3baff5;
+            --gold:#f59e0b;--gold-glow:rgba(245,158,11,0.2);
+            --success:#10b981;--error:#ef4444;--warning:#f59e0b;
+            --radius:16px;--radius-sm:10px;--radius-pill:999px;
+            --shadow:0 4px 24px rgba(0,0,0,0.4);--shadow-xl:0 20px 60px rgba(0,0,0,0.6);
+        }
+        html{scroll-behavior:smooth}
+        body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;overflow-x:hidden}
+        body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.5}
+        .bg-glow{position:fixed;width:900px;height:900px;border-radius:50%;pointer-events:none;z-index:0;filter:blur(120px)}
+        .bg-glow-1{top:-300px;left:-200px;background:radial-gradient(circle,rgba(29,155,240,0.06),transparent 70%)}
+        .bg-glow-2{bottom:-300px;right:-200px;background:radial-gradient(circle,rgba(139,92,246,0.05),transparent 70%)}
+        .page-wrap{position:relative;z-index:1}
+
+        /* TOPNAV */
+        .topnav{position:sticky;top:0;z-index:40;background:rgba(11,13,17,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between}
+        .topnav-logo{font-size:1.4rem;font-weight:800;background:linear-gradient(135deg,#1d9bf0,#8b5cf6);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-0.5px;text-decoration:none}
+        .topnav-right{display:flex;align-items:center;gap:12px}
+        .topnav-back{display:inline-flex;align-items:center;gap:6px;color:var(--text-muted);font-size:0.88rem;font-weight:500;text-decoration:none;padding:6px 14px;border-radius:var(--radius-pill);border:1px solid var(--border);transition:all .2s}
+        .topnav-back:hover{color:var(--text);border-color:var(--border-hover);background:var(--surface)}
+        .topnav-user{display:flex;align-items:center;gap:10px;padding:6px 12px 6px 6px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-pill);font-size:.85rem}
+        .topnav-user-dot{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#1d9bf0,#8b5cf6);display:grid;place-items:center;font-weight:700;color:#fff;font-size:.8rem}
+        .topnav-user span{color:var(--text-secondary)}
+
+        /* AUTH OVERLAY */
+        .auth-overlay{position:fixed;inset:0;z-index:100;background:rgba(5,7,12,0.88);backdrop-filter:blur(18px);display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity .3s}
+        .auth-overlay.hidden{opacity:0;pointer-events:none;visibility:hidden}
+        .auth-card{width:100%;max-width:440px;background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:32px 28px 28px;box-shadow:var(--shadow-xl);position:relative;overflow:hidden;transform:translateY(0);transition:transform .3s}
+        .auth-overlay.hidden .auth-card{transform:translateY(16px)}
+        .auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#1d9bf0,#8b5cf6,#f59e0b)}
+        .auth-head{text-align:center;margin-bottom:24px}
+        .auth-logo{font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,#1d9bf0,#8b5cf6);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:8px}
+        .auth-title{font-size:1.35rem;font-weight:800;letter-spacing:-.3px;margin-bottom:6px}
+        .auth-sub{font-size:.88rem;color:var(--text-muted);line-height:1.5}
+        .auth-tabs{display:flex;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-pill);padding:4px;margin-bottom:22px}
+        .auth-tab{flex:1;padding:9px;border:none;background:transparent;color:var(--text-muted);font-family:inherit;font-size:.88rem;font-weight:600;border-radius:var(--radius-pill);cursor:pointer;transition:all .2s}
+        .auth-tab.active{background:#fff;color:#000;box-shadow:0 2px 10px rgba(0,0,0,0.2)}
+        .auth-form{display:none}.auth-form.active{display:block}
+        .auth-field{margin-bottom:16px}
+        .auth-label{display:block;font-size:.82rem;font-weight:600;color:var(--text-secondary);margin-bottom:7px}
+        .auth-input{width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;font-size:.95rem;font-family:inherit;color:var(--text);outline:none;transition:all .2s}
+        .auth-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);background:rgba(29,155,240,0.06)}
+        .auth-input::placeholder{color:var(--text-muted)}
+        .auth-btn{width:100%;margin-top:6px;padding:13px;background:linear-gradient(135deg,#1d9bf0,#0f7bc0);color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 6px 20px rgba(29,155,240,0.28)}
+        .auth-btn:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(29,155,240,0.38)}
+        .auth-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+        .auth-error{display:none;margin-top:14px;padding:10px 12px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:10px;color:#f87171;font-size:.85rem;text-align:center}
+        .auth-error.show{display:block}
+        .auth-foot{margin-top:18px;text-align:center;font-size:.8rem;color:var(--text-muted)}
+        .auth-foot strong{color:var(--text-secondary)}
+
+        /* HERO */
+        .hero{text-align:center;padding:72px 24px 48px;max-width:760px;margin:0 auto;transition:all .3s}
+        .hero.compact{padding:36px 24px 24px}
+        .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(29,155,240,0.1);border:1px solid rgba(29,155,240,0.25);border-radius:var(--radius-pill);padding:6px 18px;font-size:.82rem;font-weight:600;color:var(--accent);margin-bottom:20px;letter-spacing:.02em}
+        .hero-title{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.12;letter-spacing:-1px;margin-bottom:14px}
+        .hero-title .grad{background:linear-gradient(135deg,#1d9bf0 0%,#8b5cf6 50%,#f59e0b 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+        .hero-sub{font-size:1.05rem;color:var(--text-secondary);max-width:540px;margin:0 auto 28px;font-weight:400}
+
+        /* STATS */
+        .stats-row{display:flex;justify-content:center;flex-wrap:wrap;gap:28px;margin-bottom:48px}
+        .stat-item{text-align:center}
+        .stat-num{font-size:1.7rem;font-weight:800;background:linear-gradient(135deg,var(--accent),#8b5cf6);-webkit-background-clip:text;background-clip:text;color:transparent;font-variant-numeric:tabular-nums}
+        .stat-label{font-size:.8rem;color:var(--text-muted);font-weight:500;margin-top:2px}
+
+        /* DASHBOARD */
+        .dashboard-wrap{max-width:1120px;margin:0 auto;padding:0 24px 48px;display:none}
+        .dashboard-wrap.visible{display:block;animation:fadeUp .4s ease}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+        .credit-grid{display:grid;grid-template-columns:1.65fr .9fr;gap:20px;margin-bottom:24px}
+        @media(max-width:900px){.credit-grid{grid-template-columns:1fr}}
+
+        .credit-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:26px 24px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+        .credit-card::after{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(29,155,240,0.12),transparent 70%);pointer-events:none}
+        .credit-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;gap:12px}
+        .credit-header h3{font-size:1.05rem;font-weight:700;margin-bottom:2px}
+        .credit-header p{font-size:.82rem;color:var(--text-muted)}
+        .credit-badge{font-size:.7rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px 10px;border-radius:var(--radius-pill);background:rgba(245,158,11,0.14);border:1px solid rgba(245,158,11,0.22);color:var(--gold);white-space:nowrap}
+        .credit-balance-row{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+        .credit-amount{font-size:2rem;font-weight:800;letter-spacing:-.5px;line-height:1}
+        .credit-exp{font-size:.85rem;color:var(--text-secondary);background:var(--surface-2);border:1px solid var(--border);padding:4px 10px;border-radius:var(--radius-pill)}
+        .credit-progress-track{height:8px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-pill);overflow:hidden;margin-bottom:10px}
+        .credit-progress-fill{height:100%;border-radius:var(--radius-pill);background:linear-gradient(90deg,#1d9bf0,#8b5cf6);transition:width .6s ease;box-shadow:0 0 12px rgba(29,155,240,0.35)}
+        .credit-meta{display:flex;justify-content:space-between;font-size:.78rem;color:var(--text-muted);font-weight:500}
+        .credit-warning{margin-top:14px;padding:10px 12px;border-radius:10px;font-size:.82rem;font-weight:500;line-height:1.45}
+        .credit-warning.warn{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.22);color:#fbbf24}
+        .credit-warning.danger{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.22);color:#f87171}
+
+        .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+        .stat-mini{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center;transition:border-color .2s}
+        .stat-mini:hover{border-color:var(--border-hover)}
+        .stat-mini-val{display:block;font-size:1.45rem;font-weight:800;letter-spacing:-.3px;margin-bottom:2px;font-variant-numeric:tabular-nums}
+        .stat-mini-label{font-size:.75rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+
+        /* MY ADS CARD */
+        .my-ads-card{background:var(--surface);border:1px solid var(--border);border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
+        .my-ads-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 24px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+        .my-ads-header h2{font-size:1.15rem;font-weight:750;letter-spacing:-.2px}
+        .my-ads-header p{font-size:.82rem;color:var(--text-muted);margin-top:2px}
+        .btn-primary-sm{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:linear-gradient(135deg,#1d9bf0,#0f7bc0);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(29,155,240,0.25)}
+        .btn-primary-sm:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(29,155,240,0.35)}
+        .btn-ghost-sm{padding:7px 12px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-secondary);border-radius:9px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .18s}
+        .btn-ghost-sm:hover{border-color:var(--border-hover);color:var(--text);background:var(--surface-3)}
+        .btn-danger-sm{padding:7px 12px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.18);color:#f87171;border-radius:9px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .18s}
+        .btn-danger-sm:hover{background:rgba(239,68,68,0.14);border-color:rgba(239,68,68,0.28)}
+        .table-wrap{overflow-x:auto}
+        .ads-table{width:100%;border-collapse:collapse;min-width:720px}
+        .ads-table th{padding:12px 16px;text-align:left;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);border-bottom:1px solid var(--border);white-space:nowrap;background:rgba(255,255,255,0.01)}
+        .ads-table td{padding:14px 16px;font-size:.88rem;border-bottom:1px solid var(--border);vertical-align:middle}
+        .ads-table tr:last-child td{border-bottom:none}
+        .ads-table tr:hover td{background:rgba(255,255,255,0.015)}
+        .ad-cell{display:flex;align-items:center;gap:12px;min-width:220px}
+        .ad-thumb{width:44px;height:44px;border-radius:10px;overflow:hidden;background:var(--surface-2);border:1px solid var(--border);flex-shrink:0}
+        .ad-thumb img,.ad-thumb video{width:100%;height:100%;object-fit:cover;display:block}
+        .ad-title{font-weight:600;line-height:1.25;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .ad-url{font-size:.76rem;color:var(--text-muted);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--radius-pill);font-size:.7rem;font-weight:750;letter-spacing:.02em;border:1px solid}
+        .badge-active{background:rgba(16,185,129,0.13);color:#10b981;border-color:rgba(16,185,129,0.22)}
+        .badge-paused{background:rgba(107,114,128,0.15);color:#9ca3af;border-color:rgba(107,114,128,0.22)}
+        .badge-rejected{background:rgba(239,68,68,0.12);color:#f87171;border-color:rgba(239,68,68,0.2)}
+        .num{font-variant-numeric:tabular-nums;font-weight:600}
+        .ctr-high{color:#10b981}.ctr-mid{color:#f59e0b}.ctr-low{color:var(--text-muted)}
+        .actions{display:flex;gap:8px;flex-wrap:wrap}
+        .empty-state{text-align:center;padding:56px 24px}
+        .empty-icon{font-size:2.6rem;margin-bottom:12px;opacity:.9}
+        .empty-title{font-size:1.05rem;font-weight:700;margin-bottom:6px}
+        .empty-sub{font-size:.88rem;color:var(--text-muted);max-width:360px;margin:0 auto 18px;line-height:1.5}
+
+        /* INFO PILLS + FORM (original styles kept) */
+        .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin:0 auto 48px;max-width:1120px;padding:0 24px}
+        .info-pill{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 18px;transition:border-color .2s}
+        .info-pill:hover{border-color:var(--border-hover)}
+        .info-pill-icon{font-size:1.5rem;margin-bottom:8px}
+        .info-pill-title{font-size:.9rem;font-weight:700;margin-bottom:4px}
+        .info-pill-sub{font-size:.8rem;color:var(--text-muted);line-height:1.5}
+
+        .form-section{max-width:760px;margin:0 auto;padding:0 24px 100px}
+        .form-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:36px;box-shadow:var(--shadow-xl);position:relative;overflow:hidden}
+        .form-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#1d9bf0,#8b5cf6,#f59e0b)}
+        .form-card-title{font-size:1.28rem;font-weight:750;margin-bottom:6px}
+        .form-card-sub{font-size:.88rem;color:var(--text-muted);margin-bottom:28px;line-height:1.5}
+        .field-group{margin-bottom:20px}
+        .field-label{display:block;font-size:.84rem;font-weight:600;color:var(--text-secondary);margin-bottom:8px;letter-spacing:.01em}
+        .field-label .req{color:var(--accent);margin-left:2px}
+        .field-input,.field-textarea{width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:.94rem;font-family:inherit;color:var(--text);transition:all .2s;outline:none}
+        .field-input::placeholder,.field-textarea::placeholder{color:var(--text-muted)}
+        .field-input:focus,.field-textarea:focus{border-color:var(--accent);background:rgba(29,155,240,0.06);box-shadow:0 0 0 3px var(--accent-glow)}
+        .field-textarea{resize:vertical;min-height:90px}
+        .field-hint{font-size:.77rem;color:var(--text-muted);margin-top:6px}
+        .url-field-wrap{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:all .2s}
+        .url-field-wrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+        .url-prefix{background:rgba(255,255,255,0.05);border-right:1px solid var(--border);padding:12px 13px;font-size:.8rem;color:var(--text-muted);white-space:nowrap;font-family:'DM Mono',monospace;display:flex;align-items:center}
+        .url-field-wrap .field-input{border:none;border-radius:0;background:var(--surface-2)}
+        .url-field-wrap .field-input:focus{background:rgba(29,155,240,0.06);box-shadow:none}
+        .drop-zone{border:2px dashed var(--border);border-radius:16px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .22s;position:relative;background:var(--surface-2)}
+        .drop-zone:hover,.drop-zone.drag-over{border-color:var(--accent);background:rgba(29,155,240,0.06)}
+        .drop-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+        .drop-icon{font-size:2.6rem;margin-bottom:10px;line-height:1}
+        .drop-title{font-size:.96rem;font-weight:600;margin-bottom:5px}
+        .drop-sub{font-size:.8rem;color:var(--text-muted);line-height:1.5}
+        #mediaPreview{display:none;margin-top:14px;border-radius:14px;overflow:hidden;border:1px solid var(--border);position:relative;background:#000}
+        #mediaPreview img,#mediaPreview video{width:100%;max-height:280px;object-fit:cover;display:block}
+        .preview-badge{position:absolute;top:10px;left:10px;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius-pill);padding:4px 11px;font-size:.7rem;font-weight:600;color:#fff}
+        .preview-change{position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.2);border-radius:var(--radius-pill);padding:6px 12px;font-size:.76rem;font-weight:600;color:#fff;cursor:pointer}
+        .preview-section{margin-top:30px;padding-top:26px;border-top:1px solid var(--border)}
+        .preview-section-title{font-size:.8rem;font-weight:600;color:var(--text-muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+        .preview-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+        .ad-preview-card{background:#111318;border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,0.1);max-width:360px;margin:0 auto;box-shadow:0 8px 36px rgba(0,0,0,0.5)}
+        .ad-preview-top{display:flex;align-items:center;gap:8px;padding:11px 13px 9px}
+        .ad-preview-sponsored{font-size:.68rem;color:rgba(255,255,255,0.45);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+        .ad-preview-dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.25)}
+        .ad-preview-sponsor-name{font-size:.76rem;color:rgba(255,255,255,0.6);font-weight:500}
+        .ad-preview-media{width:100%;height:190px;background:#1a1c23;display:flex;align-items:center;justify-content:center;overflow:hidden}
+        .ad-preview-media img,.ad-preview-media video{width:100%;height:100%;object-fit:cover}
+        .ad-preview-media-placeholder{color:rgba(255,255,255,0.22);text-align:center}
+        .ad-preview-media-placeholder .ph-icon{font-size:2.2rem;margin-bottom:6px}
+        .ad-preview-media-placeholder .ph-text{font-size:.78rem}
+        .ad-preview-body{padding:13px}
+        .ad-preview-title-text{font-size:.92rem;font-weight:700;color:#fff;margin-bottom:4px;line-height:1.3}
+        .ad-preview-desc{font-size:.8rem;color:rgba(255,255,255,0.55);line-height:1.45;margin-bottom:11px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+        .ad-preview-cta{display:block;width:100%;background:#1d9bf0;color:#fff;border:none;border-radius:10px;padding:10px;font-size:.86rem;font-weight:700;text-align:center;cursor:pointer}
+        .upload-progress{display:none;margin-top:18px}
+        .progress-track{height:6px;background:var(--surface-2);border-radius:var(--radius-pill);overflow:hidden}
+        .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#8b5cf6);border-radius:var(--radius-pill);transition:width .3s}
+        .progress-label{font-size:.8rem;color:var(--text-muted);margin-top:7px;text-align:center}
+        .submit-btn{width:100%;margin-top:26px;padding:14px;background:linear-gradient(135deg,#1d9bf0,#0f7bc0);color:#fff;border:none;border-radius:14px;font-family:inherit;font-size:.98rem;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 6px 22px rgba(29,155,240,0.28);position:relative;overflow:hidden}
+        .submit-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);transform:translateX(-100%);transition:transform .6s}
+        .submit-btn:hover{box-shadow:0 8px 30px rgba(29,155,240,0.4);transform:translateY(-1px)}
+        .submit-btn:hover::before{transform:translateX(100%)}
+        .submit-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+        .result-box{display:none;border-radius:14px;padding:20px;margin-top:20px;text-align:center}
+        .result-box.success{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25)}
+        .result-box.error{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2)}
+        .result-icon{font-size:2.2rem;margin-bottom:8px}
+        .result-title{font-size:1.05rem;font-weight:700;margin-bottom:5px}
+        .result-sub{font-size:.86rem;color:var(--text-muted);line-height:1.5}
+        footer{text-align:center;padding:36px 24px;color:var(--text-muted);font-size:.8rem;border-top:1px solid var(--border);margin-top:20px}
+        @media(max-width:640px){.topnav{padding:0 16px}.form-card{padding:24px 18px}.hero{padding:48px 18px 32px}.dashboard-wrap{padding:0 16px 36px}.my-ads-header{padding:18px}.credit-card{padding:20px 18px}.stats-grid{grid-template-columns:1fr 1fr}}
+    </style>
+</head>
+<body>
+<div class="bg-glow bg-glow-1"></div><div class="bg-glow bg-glow-2"></div>
+<div class="page-wrap">
+    <nav class="topnav">
+        <a href="/" class="topnav-logo">TrueVibe</a>
+        <div class="topnav-right">
+            <div id="userChip" class="topnav-user" style="display:none"><div class="topnav-user-dot" id="userInitial">?</div><span id="userNameTop">—</span></div>
+            <a href="/" class="topnav-back">← Späť do appky</a>
+        </div>
+    </nav>
+
+    <!-- AUTH MODAL -->
+    <div id="authOverlay" class="auth-overlay">
+        <div class="auth-card">
+            <div class="auth-head">
+                <div class="auth-logo">TrueVibe</div>
+                <div class="auth-title">Prihlás sa pre správu reklám</div>
+                <div class="auth-sub">Spravuj kampane, sleduj výkon a čerpaj <strong>100 Tk kredit na 30 dní zadarmo</strong>.</div>
+            </div>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">Prihlásenie</button>
+                <button class="auth-tab" data-tab="register" onclick="switchAuthTab('register')">Registrácia</button>
+            </div>
+
+            <form id="loginForm" class="auth-form active" novalidate>
+                <div class="auth-field"><label class="auth-label">Meno používateľa</label><input id="loginUser" class="auth-input" placeholder="napr. firma_sro" autocomplete="username" required></div>
+                <div class="auth-field"><label class="auth-label">Heslo</label><input id="loginPass" type="password" class="auth-input" placeholder="••••••••" autocomplete="current-password" required></div>
+                <button type="submit" class="auth-btn" id="loginBtn">Prihlásiť sa →</button>
+                <div id="loginErr" class="auth-error"></div>
+            </form>
+
+            <form id="registerForm" class="auth-form" novalidate>
+                <div class="auth-field"><label class="auth-label">Meno používateľa / firmy</label><input id="regUser" class="auth-input" placeholder="napr. moja_firma" autocomplete="username" required></div>
+                <div class="auth-field"><label class="auth-label">Heslo (min. 6 znakov)</label><input id="regPass" type="password" class="auth-input" placeholder="••••••••" autocomplete="new-password" required></div>
+                <button type="submit" class="auth-btn" id="regBtn">Vytvoriť účet a získať 100 Tk</button>
+                <div id="regErr" class="auth-error"></div>
+            </form>
+
+            <div class="auth-foot">🔒 Bezpečné prihlásenie · <strong>0,14 € / klik</strong> · Auto-pauza po minutí kreditu</div>
+        </div>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero" id="heroSection">
+        <div class="hero-badge">📢 AdverbalQ · 100 Tk zadarmo na štart</div>
+        <h1 class="hero-title">Spravuj svoje<br><span class="grad">TrueVibe reklamy</span></h1>
+        <p class="hero-sub">Dashboard pre inzerentov. Sleduj výkon, kredit a kampane na jednom mieste. Žiadne skryté poplatky.</p>
+    </section>
+
+    <div class="stats-row" id="heroStats">
+        <div class="stat-item"><div class="stat-num">10K+</div><div class="stat-label">Aktívnych používateľov</div></div>
+        <div class="stat-item"><div class="stat-num">500K+</div><div class="stat-label">Zobrazení mesačne</div></div>
+        <div class="stat-item"><div class="stat-num">0,14 Tk</div><div class="stat-label">Cena za klik</div></div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="dashboard-wrap">
+        <div class="credit-grid">
+            <div class="credit-card">
+                <div class="credit-header">
+                    <div><h3>💳 Kreditový účet</h3><p>Predplatený kredit na prekliky</p></div>
+                    <div class="credit-badge">30 dní zadarmo</div>
+                </div>
+                <div class="credit-balance-row">
+                    <span class="credit-amount" id="creditBalance">100,00 Tk</span>
+                    <span class="credit-exp" id="creditExpires">načítava sa…</span>
+                </div>
+                <div class="credit-progress-track"><div id="creditProgress" class="credit-progress-fill" style="width:100%"></div></div>
+                <div class="credit-meta"><span id="creditUsedText">0,00 Tk minutých z 100 Tk</span><span>0,14 Tk / klik</span></div>
+                <div id="creditWarning" class="credit-warning" style="display:none"></div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-mini"><span class="stat-mini-val" id="statViews">0</span><span class="stat-mini-label">Zobrazení</span></div>
+                <div class="stat-mini"><span class="stat-mini-val" id="statClicks">0</span><span class="stat-mini-label">Klikov</span></div>
+                <div class="stat-mini"><span class="stat-mini-val" id="statCtr">0%</span><span class="stat-mini-label">CTR</span></div>
+                <div class="stat-mini"><span class="stat-mini-val" id="statActive">0</span><span class="stat-mini-label">Aktívnych</span></div>
+            </div>
+        </div>
+
+        <div class="my-ads-card">
+            <div class="my-ads-header">
+                <div><h2>Moje reklamy</h2><p id="adsCountSub">Načítava sa…</p></div>
+                <button class="btn-primary-sm" onclick="document.getElementById('formAnchor').scrollIntoView({behavior:'smooth',block:'start'})">+ Nová reklama</button>
+            </div>
+            <div class="table-wrap" id="adsTableWrap"></div>
+            <div id="adsEmpty" class="empty-state" style="display:none">
+                <div class="empty-icon">📭</div>
+                <div class="empty-title">Zatiaľ nemáš žiadne reklamy</div>
+                <div class="empty-sub">Vytvor svoju prvú reklamu nižšie. Po schválení sa zobrazí v Scroll feede a začne čerpať z kreditu zadarmo.</div>
+                <button class="btn-primary-sm" onclick="document.getElementById('formAnchor').scrollIntoView({behavior:'smooth'})">Vytvoriť reklamu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- INFO -->
+    <div class="info-grid" id="infoGrid">
+        <div class="info-pill"><div class="info-pill-icon">🎯</div><div class="info-pill-title">Kontextové umiestnenie</div><div class="info-pill-sub">Reklamy sa zobrazujú každý 4. príspevok v Scroll feede pre free používateľov.</div></div>
+        <div class="info-pill"><div class="info-pill-icon">💸</div><div class="info-pill-title">100 Tk kredit zdarma</div><div class="info-pill-sub">Každý nový inzerent dostane 100 Tk na 30 dní. Platíš len 0,14 Tk za klik.</div></div>
+        <div class="info-pill"><div class="info-pill-icon">⚡</div><div class="info-pill-title">Auto-pauza</div><div class="info-pill-sub">Po minutí kreditu alebo expirácii sa reklamy automaticky pozastavia. Žiadne prekvapenia.</div></div>
+        <div class="info-pill"><div class="info-pill-icon">📊</div><div class="info-pill-title">Live štatistiky</div><div class="info-pill-sub">Sleduj CTR, zobrazenia a kliky v reálnom čase priamo v dashboarde.</div></div>
+    </div>
+
+    <!-- FORM -->
+    <div id="formAnchor" class="form-section">
+        <div class="form-card">
+            <div class="form-card-title">Vytvoriť novú reklamu</div>
+            <div class="form-card-sub">Vyplň údaje nižšie. Reklama sa po odoslaní automaticky priradí k tvojmu účtu a po schválení sa zobrazí v feede. Kredit sa čerpá až pri kliknutí.</div>
+
+            <form id="adForm" novalidate>
+                <div class="field-group">
+                    <label class="field-label" for="advertiserName">Meno inzerenta <span class="req">*</span></label>
+                    <input type="text" id="advertiserName" class="field-input" placeholder="napr. Moja Firma s.r.o." maxlength="100" required>
+                    <div class="field-hint">Zobrazí sa ako "Sponzorované – [tvoje meno]".</div>
+                </div>
+                <div class="field-group">
+                    <label class="field-label" for="adTitle">Názov reklamy <span class="req">*</span></label>
+                    <input type="text" id="adTitle" class="field-input" placeholder="Krátky, chytľavý titulok..." maxlength="150" required>
+                    <div class="field-hint">Max 150 znakov. Zobrazí sa pod médiom.</div>
+                </div>
+                <div class="field-group">
+                    <label class="field-label" for="adDescription">Popis</label>
+                    <textarea id="adDescription" class="field-textarea" placeholder="Voliteľný popis..." maxlength="300"></textarea>
+                    <div class="field-hint">Max 300 znakov.</div>
+                </div>
+                <div class="field-group">
+                    <label class="field-label" for="websiteUrl">Webová adresa <span class="req">*</span></label>
+                    <div class="url-field-wrap"><div class="url-prefix">🔗 https://</div><input type="text" id="websiteUrl" class="field-input" placeholder="tvojafirma.sk" required></div>
+                    <div class="field-hint">Kam pôjde používateľ po kliknutí. Cena 0,14 Tk sa strhne až pri kliku.</div>
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Médium – obrázok alebo video <span class="req">*</span></label>
+                    <div class="drop-zone" id="dropZone">
+                        <input type="file" id="mediaInput" accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/quicktime">
+                        <div id="dropContent"><div class="drop-icon">🎬</div><div class="drop-title">Presuň súbor sem alebo <strong style="color:var(--accent)">klikni</strong></div><div class="drop-sub">JPG, PNG, GIF, WebP, MP4, WebM, MOV · max <strong>100 MB</strong></div></div>
+                    </div>
+                    <div id="mediaPreview"><span class="preview-badge" id="previewBadge">📷 Obrázok</span><span class="preview-change" onclick="resetMedia()">Zmeniť</span></div>
+                </div>
+
+                <div class="upload-progress" id="uploadProgress"><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div><div class="progress-label" id="progressLabel">Nahráva sa… 0%</div></div>
+
+                <div class="preview-section">
+                    <div class="preview-section-title">Náhľad v feede</div>
+                    <div class="ad-preview-card">
+                        <div class="ad-preview-top"><div class="ad-preview-sponsored">Sponzorované</div><div class="ad-preview-dot"></div><div class="ad-preview-sponsor-name" id="prevSponsorName">Tvoje meno</div></div>
+                        <div class="ad-preview-media" id="prevMedia"><div class="ad-preview-media-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Tvoje médium sa zobrazí tu</div></div></div>
+                        <div class="ad-preview-body"><div class="ad-preview-title-text" id="prevTitle">Názov tvojej reklamy</div><div class="ad-preview-desc" id="prevDesc">Popis reklamy sa zobrazí tu…</div><button type="button" class="ad-preview-cta">🌐 Navštíviť web</button></div>
+                    </div>
+                </div>
+
+                <div id="successBox" class="result-box success"><div class="result-icon">🎉</div><div class="result-title">Reklama odoslaná!</div><div class="result-sub">Priradená k tvojmu účtu a schválená. Nájdeš ju hore v tabuľke „Moje reklamy“ a začne sa zobrazovať vo feede.</div></div>
+                <div id="errorBox" class="result-box error"><div class="result-icon">⚠️</div><div class="result-title">Niečo sa nepodarilo</div><div class="result-sub" id="errorMsg">Skús to znova.</div></div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">🚀 Odoslať reklamu (0 Tk, čerpá sa z kreditu)</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>© 2026 TrueVibe · AdverbalQ · 0,14 Tk / klik · 100 Tk kredit na 30 dní zadarmo</footer>
+</div>
+
+<script>
+/* ── AUTH LOGIC ── */
+const authOverlay = document.getElementById('authOverlay');
+const dashboardEl = document.getElementById('dashboard');
+const heroSection = document.getElementById('heroSection');
+const heroStats = document.getElementById('heroStats');
+let currentUser = null;
+
+function switchAuthTab(tab){
+    document.querySelectorAll('.auth-tab').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+    document.querySelectorAll('.auth-form').forEach(f=>f.classList.toggle('active', f.id===tab+'Form'));
+    hideAuthErrors();
+}
+function hideAuthErrors(){
+    document.getElementById('loginErr').classList.remove('show');
+    document.getElementById('regErr').classList.remove('show');
+}
+function showAuth(){ authOverlay.classList.remove('hidden'); document.body.style.overflow='hidden'; }
+function hideAuth(){ authOverlay.classList.add('hidden'); document.body.style.overflow=''; }
+
+async function checkAuth(){
+    try{
+        const r = await fetch('/api/me',{credentials:'include'});
+        const d = await r.json();
+        if(!d.user){ showAuth(); return false; }
+        currentUser = d.user;
+        onLoggedIn();
+        return true;
+    }catch{ showAuth(); return false; }
+}
+function onLoggedIn(){
+    hideAuth();
+    dashboardEl.classList.add('visible'); dashboardEl.style.display='block';
+    heroSection.classList.add('compact');
+    if(heroStats) heroStats.style.display='none';
+    document.getElementById('userChip').style.display='flex';
+    document.getElementById('userNameTop').textContent = currentUser.username;
+    document.getElementById('userInitial').textContent = currentUser.username[0]?.toUpperCase() || '?';
+    document.getElementById('advertiserName').value = currentUser.username;
+    document.getElementById('prevSponsorName').textContent = currentUser.username;
+    loadAll();
+}
+
+document.getElementById('loginForm').addEventListener('submit', async e=>{
+    e.preventDefault(); hideAuthErrors();
+    const u = document.getElementById('loginUser').value.trim();
+    const p = document.getElementById('loginPass').value;
+    if(!u||!p){ showLoginErr('Vyplň všetky polia.'); return; }
+    const btn=document.getElementById('loginBtn'); btn.disabled=true; btn.textContent='Prihlasujem…';
+    try{
+        const r = await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({username:u,password:p})});
+        const d = await r.json();
+        if(!r.ok) throw new Error(d.error||'Chyba prihlásenia');
+        const me = await fetch('/api/me',{credentials:'include'}).then(x=>x.json());
+        currentUser = me.user; onLoggedIn();
+    }catch(err){ showLoginErr(err.message); }
+    finally{ btn.disabled=false; btn.textContent='Prihlásiť sa →'; }
+});
+document.getElementById('registerForm').addEventListener('submit', async e=>{
+    e.preventDefault(); hideAuthErrors();
+    const u = document.getElementById('regUser').value.trim();
+    const p = document.getElementById('regPass').value;
+    if(!u||!p) return showRegErr('Vyplň všetky polia.');
+    if(p.length<6) return showRegErr('Heslo musí mať aspoň 6 znakov.');
+    const btn=document.getElementById('regBtn'); btn.disabled=true; btn.textContent='Vytváram účet…';
+    try{
+        const r = await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({username:u,password:p})});
+        const d = await r.json();
+        if(!r.ok) throw new Error(d.error||'Registrácia zlyhala');
+        const me = await fetch('/api/me',{credentials:'include'}).then(x=>x.json());
+        currentUser = me.user; onLoggedIn();
+    }catch(err){ showRegErr(err.message); }
+    finally{ btn.disabled=false; btn.textContent='Vytvoriť účet a získať 100 €'; }
+});
+function showLoginErr(m){ const el=document.getElementById('loginErr'); el.textContent=m; el.classList.add('show'); }
+function showRegErr(m){ const el=document.getElementById('regErr'); el.textContent=m; el.classList.add('show'); }
+
+/* ── DASHBOARD DATA ── */
+async function loadAll(){
+    await Promise.all([loadCredit(), loadAds()]);
+}
+async function loadCredit(){
+    try{
+        const r = await fetch('/api/advertiser/credit',{credentials:'include'});
+        if(!r.ok) throw new Error('credit fetch failed');
+        const c = await r.json();
+        renderCredit(c);
+    }catch(e){ console.error(e); }
+}
+function renderCredit(c){
+    const bal = parseFloat(c.balance)||0;
+    const exp = c.expires ? new Date(c.expires) : null;
+    const days = c.daysLeft ?? (exp? Math.max(0,Math.ceil((exp-new Date())/86400000)) : 30);
+    const pct = Math.max(0, Math.min(100, (bal/100)*100));
+    const spent = c.spent ?? (100-bal);
+
+    document.getElementById('creditBalance').textContent = bal.toLocaleString('sk-SK',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+    document.getElementById('creditProgress').style.width = pct+'%';
+    document.getElementById('creditUsedText').textContent = spent.toLocaleString('sk-SK',{minimumFractionDigits:2})+' € minutých z 100 €';
+
+    let expText = '';
+    if(c.isExpired) expText = '⛔ Expirované';
+    else if(days===0) expText = 'expiruje dnes';
+    else if(days===1) expText = 'expiruje zajtra';
+    else expText = `expiruje o ${days} dní`;
+    if(exp) expText += ` · ${exp.toLocaleDateString('sk-SK')}`;
+    document.getElementById('creditExpires').textContent = expText;
+
+    const warnEl = document.getElementById('creditWarning');
+    warnEl.style.display='none'; warnEl.className='credit-warning';
+    if(c.isExpired || bal<=0){
+        warnEl.textContent='⛔ Kredit vyčerpaný alebo expirovaný. Všetky aktívne reklamy boli automaticky pozastavené. Dobite kredit alebo kontaktuj podporu.';
+        warnEl.classList.add('danger'); warnEl.style.display='block';
+        document.getElementById('creditProgress').style.background='linear-gradient(90deg,#ef4444,#dc2626)';
+    }else if(bal<15){
+        warnEl.textContent=`⚠️ Zostáva ti už len ${bal.toFixed(2)} €. Po minutí sa reklamy automaticky pozastavia.`;
+        warnEl.classList.add('warn'); warnEl.style.display='block';
+        document.getElementById('creditProgress').style.background='linear-gradient(90deg,#f59e0b,#d97706)';
+    }else if(days<=5){
+        warnEl.textContent=`⏰ Kredit expiruje o ${days} dní. Po expirácii sa reklamy pozastavia.`;
+        warnEl.classList.add('warn'); warnEl.style.display='block';
+    }else{
+        document.getElementById('creditProgress').style.background='linear-gradient(90deg,#1d9bf0,#8b5cf6)';
+    }
+}
+async function loadAds(){
+    try{
+        const r = await fetch('/api/my-ads',{credentials:'include'});
+        if(!r.ok) throw new Error('ads fetch failed');
+        const data = await r.json();
+        renderAds(data.ads||[]);
+        renderStats(data.ads||[]);
+    }catch(e){ console.error(e); }
+}
+function renderStats(ads){
+    const totalViews = ads.reduce((s,a)=>s+(a.viewsCount||0),0);
+    const totalClicks = ads.reduce((s,a)=>s+(a.clicksCount||0),0);
+    const active = ads.filter(a=>a.status==='active').length;
+    const ctr = totalViews>0 ? (totalClicks/totalViews*100).toFixed(2)+'%' : '0%';
+    document.getElementById('statViews').textContent = totalViews.toLocaleString('sk-SK');
+    document.getElementById('statClicks').textContent = totalClicks.toLocaleString('sk-SK');
+    document.getElementById('statCtr').textContent = ctr;
+    document.getElementById('statActive').textContent = active;
+    document.getElementById('adsCountSub').textContent = ads.length ? `${ads.length} kampaní · ${active} aktívnych` : 'Zatiaľ žiadne kampane';
+}
+function renderAds(ads){
+    const wrap = document.getElementById('adsTableWrap');
+    const empty = document.getElementById('adsEmpty');
+    if(!ads.length){ wrap.innerHTML=''; empty.style.display='block'; return; }
+    empty.style.display='none';
+    let html = `<table class="ads-table"><thead><tr><th>Názov</th><th>Stav</th><th>Zobrazenia</th><th>Kliky</th><th>CTR</th><th>Dátum</th><th>Akcie</th></tr></thead><tbody>`;
+    for(const ad of ads){
+        const ctr = ad.viewsCount>0 ? (ad.clicksCount/ad.viewsCount*100) : 0;
+        let ctrCls = 'ctr-low'; if(ctr>=3) ctrCls='ctr-high'; else if(ctr>=1) ctrCls='ctr-mid';
+        const statusMap = {active:'Aktívna',paused:'Pozastavená',rejected:'Zamietnutá'};
+        const badgeCls = ad.status==='active'?'badge-active':ad.status==='paused'?'badge-paused':'badge-rejected';
+        const dateStr = new Date(ad.createdAt).toLocaleDateString('sk-SK',{day:'2-digit',month:'2-digit',year:'numeric'});
+        const thumb = ad.mediaType==='video' ? `<div class="ad-thumb"><video src="${ad.mediaUrl}" muted></video></div>` : `<div class="ad-thumb"><img src="${ad.mediaUrl}" alt=""></div>`;
+        const isActive = ad.status==='active';
+        html += `<tr>
+            <td><div class="ad-cell">${thumb}<div><div class="ad-title" title="${esc(ad.title)}">${esc(ad.title)}</div><div class="ad-url">${esc((ad.websiteUrl||'').replace(/^https?:\/\//,''))}</div></div></div></td>
+            <td><span class="badge ${badgeCls}">${statusMap[ad.status]||ad.status}</span></td>
+            <td class="num">${(ad.viewsCount||0).toLocaleString('sk-SK')}</td>
+            <td class="num">${(ad.clicksCount||0).toLocaleString('sk-SK')}</td>
+            <td class="num ${ctrCls}">${ctr.toFixed(2)}%</td>
+            <td style="white-space:nowrap;color:var(--text-muted);font-size:.84rem">${dateStr}</td>
+            <td><div class="actions">
+                <button class="btn-ghost-sm" onclick="togglePause(${ad.id},'${ad.status}')">${isActive?'⏸️ Pozastaviť':'▶️ Obnoviť'}</button>
+                <button class="btn-danger-sm" onclick="deleteAd(${ad.id})">🗑️ Zmazať</button>
+            </div></td>
+        </tr>`;
+    }
+    html+='</tbody></table>';
+    wrap.innerHTML = html;
+}
+function esc(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+async function togglePause(id,status){
+    if(!confirm(status==='active'?'Pozastaviť reklamu? Prestane sa zobrazovať vo feede.':'Obnoviť reklamu? Skontroluje sa zostatok kreditu.')) return;
+    try{
+        const r = await fetch(`/api/my-ads/${id}/pause`,{method:'POST',credentials:'include'});
+        const d = await r.json();
+        if(!r.ok) throw new Error(d.error||'Chyba');
+        await loadAll();
+    }catch(e){ alert('Chyba: '+e.message); }
+}
+async function deleteAd(id){
+    if(!confirm('Naozaj zmazať reklamu? Táto akcia je nevratná a štatistiky sa stratia.')) return;
+    try{
+        const r = await fetch(`/api/my-ads/${id}`,{method:'DELETE',credentials:'include'});
+        const d = await r.json();
+        if(!r.ok) throw new Error(d.error||'Chyba pri mazaní');
+        await loadAll();
+    }catch(e){ alert('Chyba: '+e.message); }
+}
+
+/* ── ORIGINAL FORM LOGIC (preserved + extended) ── */
+const adTitleInput = document.getElementById('adTitle');
+const adDescInput = document.getElementById('adDescription');
+const advertiserInput = document.getElementById('advertiserName');
+const websiteInput = document.getElementById('websiteUrl');
+const prevTitleEl = document.getElementById('prevTitle');
+const prevDescEl = document.getElementById('prevDesc');
+const prevSponsorEl = document.getElementById('prevSponsorName');
+const prevMediaEl = document.getElementById('prevMedia');
+const dropZone = document.getElementById('dropZone');
+const mediaInput = document.getElementById('mediaInput');
+const mediaPreview = document.getElementById('mediaPreview');
+const prevMedia = document.getElementById('prevMedia');
+const previewBadge = document.getElementById('previewBadge');
+
+if(adTitleInput){ adTitleInput.addEventListener('input',()=>{ prevTitleEl.textContent = adTitleInput.value.trim()||'Názov tvojej reklamy'; }); }
+if(adDescInput){ adDescInput.addEventListener('input',()=>{ prevDescEl.textContent = adDescInput.value.trim()||'Popis reklamy sa zobrazí tu…'; }); }
+if(advertiserInput){ advertiserInput.addEventListener('input',()=>{ prevSponsorEl.textContent = advertiserInput.value.trim()|| (currentUser?.username||'Tvoje meno'); }); }
+
+dropZone.addEventListener('dragover', e=>{ e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', ()=> dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e=>{ e.preventDefault(); dropZone.classList.remove('drag-over'); const f=e.dataTransfer.files[0]; if(f) handleMediaFile(f); });
+mediaInput.addEventListener('change', ()=>{ if(mediaInput.files[0]) handleMediaFile(mediaInput.files[0]); });
+
+function handleMediaFile(file){
+    const isVideo = file.type.startsWith('video/');
+    const reader = new FileReader();
+    reader.onload = ev=>{
+        prevMediaEl.innerHTML='';
+        if(isVideo){
+            const vid=document.createElement('video'); vid.src=ev.target.result; vid.autoplay=true; vid.loop=true; vid.muted=true; vid.playsInline=true; vid.style.cssText='width:100%;height:100%;object-fit:cover;';
+            prevMediaEl.appendChild(vid); previewBadge.textContent='🎬 Video';
+        }else{
+            const img=document.createElement('img'); img.src=ev.target.result; img.alt='Preview'; img.style.cssText='width:100%;height:100%;object-fit:cover;';
+            prevMediaEl.appendChild(img); previewBadge.textContent='📷 Obrázok';
+        }
+        mediaPreview.style.display='block'; dropZone.style.display='none';
+        // also fill preview card media
+        document.getElementById('mediaPreview').innerHTML = `<span class="preview-badge" id="previewBadge">${previewBadge.textContent}</span><span class="preview-change" onclick="resetMedia()">Zmeniť</span>` + prevMediaEl.outerHTML.replace('id="prevMedia"','') ;
+        // re-attach reference
+        // simpler: keep prevMedia as main preview, clone for small preview not needed – we reuse same container
+        // restore small preview logic
+        const mp = document.getElementById('mediaPreview');
+        if(isVideo){ const v=document.createElement('video'); v.src=ev.target.result; v.autoplay=true; v.loop=true; v.muted=true; v.style.cssText='width:100%;max-height:280px;object-fit:cover;display:block'; mp.appendChild(v); } else { const i=document.createElement('img'); i.src=ev.target.result; i.style.cssText='width:100%;max-height:280px;object-fit:cover;display:block'; mp.appendChild(i); }
+    };
+    reader.readAsDataURL(file);
+}
+function resetMedia(){
+    mediaPreview.style.display='none'; dropZone.style.display=''; mediaInput.value='';
+    prevMediaEl.innerHTML = `<div class="ad-preview-media-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Tvoje médium sa zobrazí tu</div></div>`;
+    mediaPreview.innerHTML = `<span class="preview-badge" id="previewBadge">📷 Obrázok</span><span class="preview-change" onclick="resetMedia()">Zmeniť</span>`;
+}
+
+const adForm = document.getElementById('adForm');
+const submitBtn = document.getElementById('submitBtn');
+const progressWrap = document.getElementById('uploadProgress');
+const progressFill = document.getElementById('progressFill');
+const progressLabel = document.getElementById('progressLabel');
+const successBox = document.getElementById('successBox');
+const errorBox = document.getElementById('errorBox');
+const errorMsg = document.getElementById('errorMsg');
+
+adForm.addEventListener('submit', async e=>{
+    e.preventDefault(); hideResults();
+    const advertiserName = document.getElementById('advertiserName').value.trim();
+    const title = document.getElementById('adTitle').value.trim();
+    const description = document.getElementById('adDescription').value.trim();
+    const websiteRaw = document.getElementById('websiteUrl').value.trim();
+    const mediaFile = document.getElementById('mediaInput').files[0];
+    if(!advertiserName) return showError('Zadaj meno inzerenta.');
+    if(!title) return showError('Zadaj názov reklamy.');
+    if(!websiteRaw) return showError('Zadaj webovú adresu.');
+    if(!mediaFile) return showError('Nahraj obrázok alebo video.');
+    if(mediaFile.size>100*1024*1024) return showError('Súbor je príliš veľký. Max 100 MB.');
+    let websiteUrl = websiteRaw; if(!websiteUrl.startsWith('http://')&&!websiteUrl.startsWith('https://')) websiteUrl='https://'+websiteUrl;
+    try{ new URL(websiteUrl); }catch{ return showError('Zadaj platnú adresu, napr. tvojafirma.sk'); }
+    const fd = new FormData(); fd.append('advertiser_name',advertiserName); fd.append('title',title); if(description) fd.append('description',description); fd.append('website_url',websiteUrl); fd.append('media',mediaFile);
+    submitBtn.disabled=true; submitBtn.textContent='Nahrávam…'; progressWrap.style.display='block'; progressFill.style.width='0%'; progressLabel.textContent='Nahráva sa… 0%';
+    try{
+        await new Promise((resolve,reject)=>{
+            const xhr=new XMLHttpRequest(); xhr.open('POST','/api/ads/submit',true); xhr.withCredentials=true;
+            xhr.upload.onprogress=ev=>{ if(ev.lengthComputable){ const pct=Math.round(ev.loaded/ev.total*100); progressFill.style.width=pct+'%'; progressLabel.textContent=`Nahráva sa… ${pct}%`; } };
+            xhr.onload=()=>{ if(xhr.status===200){ try{ const d=JSON.parse(xhr.responseText); d.success?resolve(d):reject(new Error(d.error||'Chyba servera')); }catch{ reject(new Error('Neplatná odpoveď servera')); } } else { try{ const d=JSON.parse(xhr.responseText); reject(new Error(d.error||`Chyba ${xhr.status}`)); }catch{ reject(new Error(`Chyba servera ${xhr.status}`)); } } };
+            xhr.onerror=()=>reject(new Error('Chyba siete. Skontroluj pripojenie.')); xhr.send(fd);
+        });
+        progressFill.style.width='100%'; progressLabel.textContent='✅ Nahrané!'; setTimeout(()=>{ progressWrap.style.display='none'; },900);
+        successBox.style.display='block'; adForm.style.opacity='0.35'; adForm.style.pointerEvents='none';
+        setTimeout(()=>{ adForm.reset(); resetMedia(); adForm.style.opacity=''; adForm.style.pointerEvents=''; successBox.style.display='none'; document.getElementById('prevTitle').textContent='Názov tvojej reklamy'; document.getElementById('prevDesc').textContent='Popis reklamy sa zobrazí tu…'; if(currentUser){ document.getElementById('advertiserName').value=currentUser.username; } }, 1800);
+        await loadAll(); document.getElementById('dashboard').scrollIntoView({behavior:'smooth',block:'start'});
+    }catch(err){ progressWrap.style.display='none'; showError(err.message||'Neočakávaná chyba.'); }
+    finally{ submitBtn.disabled=false; submitBtn.textContent='🚀 Odoslať reklamu (0 €, čerpá sa z kreditu)'; }
+});
+function showError(msg){ errorMsg.textContent=msg; errorBox.style.display='block'; errorBox.scrollIntoView({behavior:'smooth',block:'center'}); }
+function hideResults(){ successBox.style.display='none'; errorBox.style.display='none'; }
+
+/* INIT */
+checkAuth();
+</script>
+</body>
+</html>

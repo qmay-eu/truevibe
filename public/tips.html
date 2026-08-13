@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Tips – !YEAH</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg: rgba(248, 250, 252, 0.85);
+            --card: rgba(255, 255, 255, 0.7);
+            --card-border: rgba(255, 255, 255, 0.5);
+            --text: #1e2a3a;
+            --text-secondary: #5b6e8c;
+            --border: rgba(0, 0, 0, 0.08);
+            --accent: #1d9bf0;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.02);
+            --backdrop-blur: blur(12px);
+        }
+
+        body.dark {
+            --bg: rgba(10, 12, 16, 0.9);
+            --card: rgba(22, 24, 28, 0.75);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text: #e7e9ea;
+            --text-secondary: #8b9ab0;
+            --border: rgba(255, 255, 255, 0.08);
+            --accent: #1d9bf0;
+        }
+
+        body {
+            background: radial-gradient(circle at 10% 20%, rgba(29,155,240,0.05), rgba(139,92,246,0.02)), var(--bg);
+            backdrop-filter: var(--backdrop-blur);
+            color: var(--text);
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .glass-card {
+            background: var(--card);
+            backdrop-filter: var(--backdrop-blur);
+            border-radius: 48px;
+            padding: 40px 32px;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #1d9bf0, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            font-size: 1rem;
+        }
+
+        .tip-section {
+            margin-bottom: 28px;
+            border-left: 3px solid var(--accent);
+            padding-left: 20px;
+        }
+
+        .tip-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tip-icon {
+            font-size: 1.6rem;
+        }
+
+        .tip-text {
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .tip-step {
+            margin-top: 12px;
+            padding-left: 20px;
+            list-style-type: none;
+        }
+
+        .tip-step li {
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .tip-step li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+
+        .back-btn {
+            display: block;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--card-border);
+            padding: 12px 20px;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text);
+            cursor: pointer;
+            transition: 0.1s;
+            text-align: center;
+            text-decoration: none;
+            width: 100%;
+            margin-top: 24px;
+        }
+
+        .back-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            transform: scale(0.98);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--card-border);
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text);
+            z-index: 100;
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        @media (max-width: 550px) {
+            .glass-card { padding: 28px 20px; }
+            h1 { font-size: 1.6rem; }
+            .tip-title { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <button id="themeToggle" class="theme-toggle">🌙</button>
+    <div class="container">
+        <div class="glass-card">
+            <h1>💡 What can I do?</h1>
+            <div class="subtitle">If you see “region not supported”, try these tips:</div>
+
+            <div class="tip-section">
+                <div class="tip-title">
+                    <span class="tip-icon">🛡️</span> Turn off VPN / Proxy
+                </div>
+                <div class="tip-text">The app checks your real location. If you’re using a VPN or proxy, please disable it.</div>
+                <ul class="tip-step">
+                    <li>On PC: Close your VPN application or turn off proxy in network settings.</li>
+                    <li>On mobile: Go to Settings → VPN and disable any active connection.</li>
+                    <li>Try reloading the page (F5 or refresh).</li>
+                </ul>
+            </div>
+
+            <div class="tip-section">
+                <div class="tip-title">
+                    <span class="tip-icon">🧹</span> Clear cache and cookies
+                </div>
+                <div class="tip-text">Sometimes your browser stores old data that may block access.</div>
+                <ul class="tip-step">
+                    <li>Chrome / Edge: Ctrl+Shift+Delete → select “Cookies and cached files” → Clear.</li>
+                    <li>Firefox: Ctrl+Shift+Delete → select “Cookies and Cache” → OK.</li>
+                    <li>After clearing, refresh the page.</li>
+                </ul>
+            </div>
+
+            <div class="tip-section">
+                <div class="tip-title">
+                    <span class="tip-icon">🌐</span> Check DNS settings
+                </div>
+                <div class="tip-text">Some DNS servers might hide your actual location.</div>
+                <ul class="tip-step">
+                    <li>Use your ISP’s default DNS (automatic).</li>
+                    <li>Or try public DNS like Cloudflare (1.1.1.1) or Google (8.8.8.8).</li>
+                    <li>DNS changes can be made in your network / Wi-Fi settings.</li>
+                </ul>
+            </div>
+
+            <div class="tip-section">
+                <div class="tip-title">
+                    <span class="tip-icon">📱</span> Try a different connection
+                </div>
+                <div class="tip-text">Your current network might be blocked.</div>
+                <ul class="tip-step">
+                    <li>Switch from Wi-Fi to mobile data (or vice versa).</li>
+                    <li>If you’re on a corporate network, try connecting through your home Wi-Fi.</li>
+                    <li>Restart your router / modem.</li>
+                </ul>
+            </div>
+
+            <div class="tip-section">
+                <div class="tip-title">
+                    <span class="tip-icon">🕒</span> Wait and try again
+                </div>
+                <div class="tip-text">Sometimes it’s a temporary outage or a geo‑location check.</div>
+                <ul class="tip-step">
+                    <li>Wait 10–15 minutes and refresh the page.</li>
+                    <li>If the issue persists, please contact our support.</li>
+                </ul>
+            </div>
+
+            <a href="blocked.html" class="back-btn">← Back to info page</a>
+        </div>
+    </div>
+
+    <script>
+        // Dark mode toggle (persistent)
+        const themeToggle = document.getElementById('themeToggle');
+        const setTheme = (theme) => {
+            if (theme === 'dark') {
+                document.body.classList.add('dark');
+                themeToggle.innerText = '☀️';
+            } else {
+                document.body.classList.remove('dark');
+                themeToggle.innerText = '🌙';
+            }
+            localStorage.setItem('tipsTheme', theme);
+        };
+        const savedTheme = localStorage.getItem('tipsTheme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        setTheme(savedTheme);
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.body.classList.contains('dark');
+            setTheme(isDark ? 'light' : 'dark');
+        });
+    </script>
+</body>
+</html>

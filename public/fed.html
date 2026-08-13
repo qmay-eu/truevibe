@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>TrueVibe – Contact us</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f5f7fa;
+            --card: #ffffff;
+            --text: #1e2a3a;
+            --text-secondary: #5b6e8c;
+            --border: #e2e8f0;
+            --accent: #1d9bf0;
+        }
+        body.dark {
+            --bg: #000000;
+            --card: #16181c;
+            --text: #e7e9ea;
+            --text-secondary: #71767b;
+            --border: #2f3336;
+            --accent: #1d9bf0;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            transition: background 0.2s;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: 32px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+        .contact-list {
+            list-style: none;
+        }
+        .contact-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .contact-list li:last-child { border-bottom: none; }
+        .avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 1.2rem;
+        }
+        .info h3 { font-size: 1rem; margin-bottom: 4px; }
+        .info p { font-size: 0.8rem; color: var(--text-secondary); }
+        .back-link {
+            display: inline-block;
+            margin-top: 24px;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .theme-toggle {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 40px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>📞 Contact us</h1>
+        <button id="themeToggle" class="theme-toggle">🌙</button>
+    </div>
+    <p style="margin-bottom: 20px; color: var(--text-secondary);">If you need help from a real person, write to one of us:</p>
+    <ul class="contact-list">
+    <li>
+        <div class="avatar">H</div>
+        <div class="info">
+            <h3>Hana</h3>
+            <p><a href="mailto:cabadahana@gmail.com">cabadahana@gmail.com</a> • Europe</p>
+        </div>
+    </li>
+    <li>
+        <div class="avatar">#</div>
+        <div class="info">
+            <h3>#</h3>
+            <p><a href="mailto:stella@qmay.eu">Out of service</a> • South America</p>
+        </div>
+    </li>
+    <li>
+        <div class="avatar">#</div>
+        <div class="info">
+            <h3>#</h3>
+            <p><a href="mailto:alex@qmay.eu">Out of service</a> • North America</p>
+        </div>
+    </li>
+    <li>
+        <div class="avatar">#</div>
+        <div class="info">
+            <h3>#</h3>
+            <p><a href="mailto:priya@qmay.eu">Out of service</a> • Asia</p>
+        </div>
+    </li>
+</ul>
+
+    <a href="help.html" class="back-link">← Back to Help Center</a>
+</div>
+<script>
+    const themeToggle = document.getElementById('themeToggle');
+    const setTheme = (theme) => {
+        if (theme === 'dark') document.body.classList.add('dark');
+        else document.body.classList.remove('dark');
+        localStorage.setItem('theme', theme);
+        themeToggle.innerText = theme === 'dark' ? '☀️' : '🌙';
+    };
+    const saved = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    setTheme(saved);
+    themeToggle.onclick = () => {
+        const isDark = document.body.classList.contains('dark');
+        setTheme(isDark ? 'light' : 'dark');
+    };
+</script>
+</body>
+</html>

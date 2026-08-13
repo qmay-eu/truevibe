@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Settings - TrueVibe</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        :root {
+            --bg: #f0f4f8;
+            --surface: rgba(255,255,255,0.85);
+            --surface-2: rgba(255,255,255,0.6);
+            --card: rgba(255,255,255,0.75);
+            --card-border: rgba(255,255,255,0.6);
+            --text: #1e2a3a;
+            --text-secondary: #5b6e8c;
+            --text-muted: #8fa3bc;
+            --border: rgba(0,0,0,0.08);
+            --accent: #1d9bf0;
+            --accent-hover: #0f7bc0;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --premium-gold: #f5a623;
+            --shadow: 0 4px 24px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+            --shadow-lg: 0 20px 60px rgba(0,0,0,0.12);
+            --radius: 20px;
+            --radius-sm: 12px;
+            --radius-pill: 40px;
+            --blur: blur(20px);
+        }
+
+        body.dark {
+            --bg: #090c12;
+            --surface: rgba(18,22,30,0.95);
+            --surface-2: rgba(28,32,42,0.8);
+            --card: rgba(22,26,36,0.85);
+            --card-border: rgba(255,255,255,0.08);
+            --text: #e8edf5;
+            --text-secondary: #8b9ab0;
+            --text-muted: #4a5568;
+            --border: rgba(255,255,255,0.07);
+            --accent: #1d9bf0;
+            --accent-hover: #3ba9f5;
+            --shadow: 0 4px 24px rgba(0,0,0,0.4);
+            --shadow-lg: 0 20px 60px rgba(0,0,0,0.6);
+            --premium-gold: #fbbf24;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            transition: background 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        body.dark {
+            background: radial-gradient(ellipse 800px 400px at 50% 0%, rgba(29,155,240,0.06), transparent 60%),
+                        var(--bg);
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--surface);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border-bottom: 1px solid var(--card-border);
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: var(--shadow);
+        }
+
+        .back-btn {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--surface-2);
+            border: 1px solid var(--card-border);
+            color: var(--text);
+            font-size: 1.2rem;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .back-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
+
+        .header-title { flex: 1; }
+        .header-title h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.3px; }
+        .header-title p { font-size: 0.78rem; color: var(--text-secondary); margin-top: 1px; }
+
+        .theme-btn {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--surface-2);
+            border: 1px solid var(--card-border);
+            color: var(--text);
+            font-size: 1.1rem;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .theme-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
+
+        .main {
+            max-width: 620px;
+            margin: 0 auto;
+            padding: 24px 16px 80px;
+        }
+
+        .profile-card {
+            background: linear-gradient(135deg, rgba(29,155,240,0.15), rgba(139,92,246,0.1));
+            border: 1px solid rgba(29,155,240,0.25);
+            border-radius: var(--radius);
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: -40px; right: -40px;
+            width: 160px; height: 160px;
+            background: radial-gradient(circle, rgba(29,155,240,0.15), transparent 70%);
+            pointer-events: none;
+        }
+
+        /* ── NEW AVATAR & STREAK SYSTEM ── */
+        .avatar-wrap { position: relative; width: 64px; height: 64px; flex-shrink: 0; }
+        .avatar {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1d9bf0, #8b5cf6);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 4px 16px rgba(29,155,240,0.35);
+            overflow: hidden;
+        }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        .btn-change-avatar { position: absolute; bottom: -2px; right: -2px; background: var(--accent); color: white; border: 3px solid var(--surface); border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; padding: 0; }
+        .btn-change-avatar:hover { background: var(--accent-hover); transform: scale(1.1); }
+        /* ── END NEW AVATAR & STREAK SYSTEM ── */
+
+        .profile-info { flex: 1; min-width: 0; }
+        .profile-info .name {
+            font-size: 1.15rem; font-weight: 700;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .profile-info .handle { font-size: 0.82rem; color: var(--text-secondary); margin-top: 2px; }
+        .premium-tag {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: linear-gradient(135deg, rgba(245,166,35,0.25), rgba(245,166,35,0.12));
+            border: 1px solid rgba(245,166,35,0.4);
+            color: var(--premium-gold);
+            font-size: 0.72rem; font-weight: 700;
+            padding: 3px 10px; border-radius: var(--radius-pill); margin-top: 6px;
+        }
+        .free-tag {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: var(--surface-2); border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.72rem; font-weight: 600;
+            padding: 3px 10px; border-radius: var(--radius-pill); margin-top: 6px;
+        }
+        .premium-tag svg,
+        .free-tag svg,
+        .stat-icon {
+            width: 12px; height: 12px;
+            display: block;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .stats-row {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 10px; margin-bottom: 28px;
+        }
+        .stat-card {
+            background: var(--card); border: 1px solid var(--card-border);
+            border-radius: var(--radius-sm); padding: 14px 10px;
+            text-align: center; backdrop-filter: var(--blur);
+        }
+        .stat-card .stat-num { font-size: 1.4rem; font-weight: 800; color: var(--accent); line-height: 1; }
+        .stat-card .stat-label { font-size: 0.68rem; color: var(--text-secondary); margin-top: 4px; font-weight: 500; }
+
+        .section { margin-bottom: 28px; }
+        .section-label {
+            font-size: 0.72rem; font-weight: 700; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 1.2px;
+            margin-bottom: 10px; padding-left: 4px;
+        }
+
+        .settings-card {
+            background: var(--card); border: 1px solid var(--card-border);
+            border-radius: var(--radius); overflow: hidden;
+            backdrop-filter: var(--blur); box-shadow: var(--shadow);
+        }
+
+        .settings-item {
+            display: flex; align-items: center; gap: 14px;
+            padding: 16px 18px; border-bottom: 1px solid var(--border);
+            cursor: pointer; transition: background 0.15s ease; position: relative;
+        }
+        .settings-item:last-child { border-bottom: none; }
+        .settings-item:hover { background: rgba(29,155,240,0.06); }
+        .settings-item:active { background: rgba(29,155,240,0.1); }
+
+        .item-icon {
+            width: 38px; height: 38px; border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; flex-shrink: 0;
+        }
+        .item-icon svg,
+        .header-icon,
+        .modal-icon {
+            width: 20px; height: 20px;
+            display: block;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .header-icon {
+            width: 18px; height: 18px;
+            stroke-width: 2;
+        }
+        .modal-title {
+            display: flex; align-items: center; gap: 8px;
+        }
+        .modal-title .modal-icon-wrap {
+            width: 32px; height: 32px; border-radius: 10px;
+            display: inline-flex; align-items: center; justify-content: center;
+            background: rgba(29,155,240,0.12); color: var(--accent);
+            flex-shrink: 0;
+        }
+        .modal-title .modal-icon {
+            width: 16px; height: 16px;
+            stroke-width: 2;
+        }
+        .icon-blue { background: rgba(29,155,240,0.15); color: #1d9bf0; }
+        .icon-purple { background: rgba(139,92,246,0.15); color: #8b5cf6; }
+        .icon-green { background: rgba(16,185,129,0.15); color: #10b981; }
+        .icon-gold { background: rgba(245,166,35,0.15); color: #f59e0b; }
+        .icon-red { background: rgba(239,68,68,0.15); color: #ef4444; }
+        .icon-gray { background: rgba(107,114,128,0.15); color: #6b7280; }
+        .icon-teal { background: rgba(20,184,166,0.15); color: #14b8a6; }
+        .icon-orange { background: rgba(249,115,22,0.15); color: #f97316; }
+
+        .item-text { flex: 1; min-width: 0; }
+        .item-text .item-title { font-size: 0.95rem; font-weight: 600; color: var(--text); }
+        .item-text .item-desc { font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px; }
+        .item-arrow { color: var(--text-muted); font-size: 0.85rem; }
+
+        .item-badge {
+            font-size: 0.68rem; font-weight: 700;
+            padding: 3px 8px; border-radius: var(--radius-pill);
+        }
+        .badge-premium {
+            background: linear-gradient(135deg, rgba(245,166,35,0.2), rgba(245,166,35,0.1));
+            color: var(--premium-gold); border: 1px solid rgba(245,166,35,0.3);
+        }
+        .badge-free { background: rgba(107,114,128,0.15); color: var(--text-secondary); }
+
+        .danger-card {
+            background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2);
+            border-radius: var(--radius); overflow: hidden;
+        }
+        .danger-item {
+            display: flex; align-items: center; gap: 14px;
+            padding: 16px 18px; cursor: pointer; transition: background 0.15s ease;
+        }
+        .danger-item:hover { background: rgba(239,68,68,0.08); }
+        .danger-item .item-title { color: var(--error); }
+        .danger-item .item-desc { color: rgba(239,68,68,0.7); }
+
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            z-index: 1000; display: flex; align-items: flex-end; justify-content: center;
+            opacity: 0; visibility: hidden; transition: all 0.3s ease; padding: 0;
+        }
+        .modal-overlay.open { opacity: 1; visibility: visible; }
+
+        .modal-sheet {
+            background: var(--surface);
+            backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--card-border);
+            border-radius: 28px 28px 0 0;
+            width: 100%; max-width: 620px;
+            padding: 8px 24px 40px;
+            transform: translateY(100%);
+            transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+            max-height: 90vh; overflow-y: auto;
+        }
+        .modal-overlay.open .modal-sheet { transform: translateY(0); }
+
+        .modal-handle {
+            width: 40px; height: 4px; background: var(--border);
+            border-radius: 2px; margin: 12px auto 20px;
+        }
+        .modal-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 6px; }
+        .modal-subtitle { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 22px; line-height: 1.5; }
+
+        .form-group { margin-bottom: 16px; }
+        .form-label {
+            display: block; font-size: 0.8rem; font-weight: 600;
+            color: var(--text-secondary); margin-bottom: 8px;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .form-input {
+            width: 100%; background: var(--surface-2); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); padding: 13px 16px;
+            font-size: 0.98rem; color: var(--text); font-family: inherit;
+            transition: all 0.2s ease; outline: none;
+        }
+        .form-input:focus {
+            border-color: var(--accent); background: rgba(29,155,240,0.06);
+            box-shadow: 0 0 0 3px rgba(29,155,240,0.12);
+        }
+        .form-input.error { border-color: var(--error); background: rgba(239,68,68,0.05); }
+
+        .form-error { font-size: 0.78rem; color: var(--error); margin-top: 6px; display: none; }
+        .form-error.show { display: block; }
+
+        .btn {
+            width: 100%; padding: 14px; border-radius: var(--radius-pill); border: none;
+            font-size: 0.98rem; font-weight: 700; cursor: pointer;
+            transition: all 0.2s ease; font-family: inherit;
+        }
+        .btn-primary {
+            background: var(--accent); color: white;
+            box-shadow: 0 4px 16px rgba(29,155,240,0.35);
+        }
+        .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(29,155,240,0.45); }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .btn-danger {
+            background: var(--error); color: white;
+            box-shadow: 0 4px 16px rgba(239,68,68,0.3);
+        }
+        .btn-danger:hover { background: #dc2626; transform: translateY(-1px); }
+        .btn-danger:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .btn-ghost {
+            background: var(--surface-2); color: var(--text-secondary);
+            border: 1px solid var(--border); margin-top: 10px;
+        }
+        .btn-ghost:hover { background: var(--border); color: var(--text); }
+
+        .btn-advertise {
+            background: linear-gradient(135deg, #f97316, #ea580c); color: white;
+            box-shadow: 0 4px 16px rgba(249,115,22,0.35);
+        }
+        .btn-advertise:hover { background: linear-gradient(135deg, #ea580c, #c2410c); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(249,115,22,0.45); }
+        .btn-advertise:active { transform: translateY(0); }
+
+        .delete-warning {
+            background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
+            border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 20px;
+        }
+        .delete-warning p { font-size: 0.85rem; color: var(--error); line-height: 1.5; }
+        .delete-warning p strong { font-weight: 700; }
+
+        .checkbox-row {
+            display: flex; align-items: flex-start; gap: 12px;
+            padding: 14px; background: var(--surface-2); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); margin-bottom: 20px;
+            cursor: pointer; transition: all 0.2s ease;
+        }
+        .checkbox-row:hover { border-color: var(--error); background: rgba(239,68,68,0.04); }
+        .checkbox-row input[type="checkbox"] {
+            width: 18px; height: 18px; accent-color: var(--error);
+            flex-shrink: 0; margin-top: 2px; cursor: pointer;
+        }
+        .checkbox-row label { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; cursor: pointer; }
+        .checkbox-row label strong { color: var(--text); }
+
+        .premium-benefits {
+            background: linear-gradient(135deg, rgba(245,166,35,0.1), rgba(245,166,35,0.05));
+            border: 1px solid rgba(245,166,35,0.25);
+            border-radius: var(--radius-sm); padding: 16px; margin-bottom: 20px;
+        }
+        .premium-benefit {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 0.85rem; color: var(--text-secondary); padding: 5px 0;
+        }
+        .premium-benefit span:first-child {
+            font-size: 1rem;
+            display: inline-flex; align-items: center; justify-content: center;
+            color: var(--premium-gold);
+        }
+        .premium-benefit .item-icon-svg {
+            width: 16px; height: 16px;
+            display: block;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Advertise info box */
+        .advertise-info {
+            background: linear-gradient(135deg, rgba(249,115,22,0.1), rgba(249,115,22,0.05));
+            border: 1px solid rgba(249,115,22,0.25);
+            border-radius: var(--radius-sm); padding: 16px; margin-bottom: 20px;
+        }
+        .advertise-info p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+        .advertise-info p strong { color: var(--text); font-weight: 700; }
+
+        .advertise-features {
+            list-style: none; margin-bottom: 20px;
+        }
+        .advertise-features li {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 0.88rem; color: var(--text-secondary);
+            padding: 8px 0; border-bottom: 1px solid var(--border);
+        }
+        .advertise-features li:last-child { border-bottom: none; }
+        .advertise-features li span:first-child { font-size: 1.05rem; }
+
+        .export-info {
+            background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2);
+            border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 20px;
+        }
+        .export-info p { font-size: 0.85rem; color: var(--success); line-height: 1.5; }
+        .export-list { list-style: none; margin-bottom: 20px; }
+        .export-list li {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 0.88rem; color: var(--text-secondary);
+            padding: 8px 0; border-bottom: 1px solid var(--border);
+        }
+        .export-list li:last-child { border-bottom: none; }
+
+        .toast {
+            position: fixed; bottom: 30px; left: 50%;
+            transform: translateX(-50%) translateY(120px);
+            background: var(--surface); backdrop-filter: var(--blur);
+            border: 1px solid var(--card-border); border-radius: var(--radius);
+            padding: 13px 22px; box-shadow: var(--shadow-lg); z-index: 9999;
+            font-size: 0.9rem; font-weight: 600;
+            display: flex; align-items: center; gap: 8px;
+            transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+            white-space: nowrap;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.success { border-left: 3px solid var(--success); }
+        .toast.error { border-left: 3px solid var(--error); }
+        .toast.info { border-left: 3px solid var(--accent); }
+
+        .btn-loading { position: relative; color: transparent !important; }
+        .btn-loading::after {
+            content: ''; position: absolute;
+            width: 18px; height: 18px;
+            border: 2px solid rgba(255,255,255,0.4); border-top-color: white;
+            border-radius: 50%; animation: spin 0.7s linear infinite;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+        @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        .version-info {
+            text-align: center; padding: 20px;
+            color: var(--text-muted); font-size: 0.75rem;
+        }
+
+        @media (max-width: 480px) {
+            .main { padding: 16px 12px 80px; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .modal-sheet { padding: 8px 18px 36px; }
+            .header { padding: 12px 16px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <a href="/" class="back-btn" aria-label="Back">
+        <svg class="header-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m15 18-6-6 6-6"></path>
+        </svg>
+    </a>
+    <div class="header-title">
+        <h1>
+            <svg class="header-icon" viewBox="0 0 24 24" aria-hidden="true" style="display:inline-block;vertical-align:-0.15em;margin-right:6px;">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19 12a7 7 0 0 0-.1-1.1l2.3-1.8-2-3.5-2.8 1.1a7.6 7.6 0 0 0-1.9-1.1L14 2h-4l-.6 2.7a7.6 7.6 0 0 0-1.9 1.1L4.7 5.6l-2 3.5 2.3 1.8A7 7 0 0 0 5 12a7 7 0 0 0 .1 1.1L2.8 15l2 3.5 2.8-1.1a7.6 7.6 0 0 0 1.9 1.1L10 22h4l.6-2.7a7.6 7.6 0 0 0 1.9-1.1l2.8 1.1 2-3.5-2.3-1.8c.1-.4.1-.7.1-1.1Z"></path>
+            </svg>
+            Settings
+        </h1>
+        <p id="headerSubtitle">Loading...</p>
+    </div>
+    <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">
+        <svg class="header-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"></path>
+        </svg>
+    </button>
+</div>
+
+<div class="main">
+
+    <div class="profile-card" id="profileCard">
+        <!-- ── NEW AVATAR & STREAK SYSTEM ── -->
+        <div class="avatar-wrap">
+            <div class="avatar" id="avatarEl">?</div>
+            <button id="changeAvatarBtn" class="btn-change-avatar" aria-label="Change profile photo">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+            </button>
+        </div>
+        <input type="file" id="avatarFileInput" accept="image/jpeg,image/png,image/webp" style="display:none;">
+        <!-- ── END NEW AVATAR & STREAK SYSTEM ── -->
+        <div class="profile-info">
+            <div class="name" id="profileName">–</div>
+            <div class="handle" id="profileHandle">@–</div>
+            <div id="premiumTagEl"></div>
+        </div>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-num" id="statPosts">–</div>
+            <div class="stat-label">Posts</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num" id="statLikesReceived">–</div>
+            <div class="stat-label">Likes</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num" id="statReposts">–</div>
+            <div class="stat-label">Reposts</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num" id="statLikesGiven">–</div>
+            <div class="stat-label">Likes Given</div>
+        </div>
+    </div>
+
+    <!-- ACCOUNT -->
+    <div class="section">
+        <div class="section-label">Account</div>
+        <div class="settings-card">
+            <div class="settings-item" onclick="openModal('usernameModal')">
+                <div class="item-icon icon-blue">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 20a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4"></path>
+                        <circle cx="12" cy="8" r="3.5"></circle>
+                    </svg>
+                </div>
+                <div class="item-text">
+                    <div class="item-title">Change Username</div>
+                    <div class="item-desc">Update your display name</div>
+                </div>
+                <span class="item-arrow">›</span>
+            </div>
+            <div class="settings-item" onclick="openModal('passwordModal')">
+                <div class="item-icon icon-purple">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="5" y="11" width="14" height="10" rx="2"></rect>
+                        <path d="M8 11V8a4 4 0 0 1 8 0v3"></path>
+                    </svg>
+                </div>
+                <div class="item-text">
+                    <div class="item-title">Change Password</div>
+                    <div class="item-desc">Update your account password</div>
+                </div>
+                <span class="item-arrow">›</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBSCRIPTION -->
+    <div class="section">
+        <div class="section-label">Subscription</div>
+        <div class="settings-card">
+            <div class="settings-item" id="premiumItem" onclick="openPremiumModal()">
+                <div class="item-icon icon-gold">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m12 3 2.5 5 5.5.7-4.2 3.8 1.2 5.5L12 15.7 7 18l1.2-5.5L4 8.7l5.5-.7L12 3Z"></path>
+                    </svg>
+                </div>
+                <div class="item-text">
+                    <div class="item-title" id="premiumItemTitle">Premium</div>
+                    <div class="item-desc" id="premiumItemDesc">Loading...</div>
+                </div>
+                <span class="item-badge" id="premiumItemBadge"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADVERTISE -->
+    <div class="section">
+        <div class="section-label">Promote</div>
+        <div class="settings-card">
+            <div class="settings-item" onclick="openModal('advertiseModal')">
+                <div class="item-icon icon-orange">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4 6h10a2 2 0 0 1 2 2v2l3-2v8l-3-2v2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"></path>
+                    </svg>
+                </div>
+                <div class="item-text">
+                    <div class="item-title">Advertise</div>
+                    <div class="item-desc">Promote your content or business</div>
+                </div>
+                <span class="item-arrow">›</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- DATA & PRIVACY -->
+    <div class="section">
+        <div class="section-label">Privacy & Data</div>
+        <div class="settings-card">
+            <div class="settings-item" onclick="openModal('exportModal')">
+                <div class="item-icon icon-green">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 3v12"></path>
+                        <path d="m7 10 5 5 5-5"></path>
+                        <path d="M5 19h14"></path>
+                    </svg>
+                </div>
+                <div class="item-text">
+                    <div class="item-title">Export Data</div>
+                    <div class="item-desc">Download all your data as JSON</div>
+                </div>
+                <span class="item-arrow">›</span>
+            </div>
+            <div class="settings-item" onclick="openModal('statsModal')">
+                <div class="item-icon icon-blue">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 19V9"></path>
+                        <path d="M12 19V5"></path>
+                        <path d="M19 19v-7"></path>
+                    </svg>
+                </div>
+                <div class="item-text">
+                    <div class="item-title">My Statistics</div>
+                    <div class="item-desc">Detailed overview of your activity</div>
+                </div>
+                <span class="item-arrow">›</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- APP -->
+    <div class="section">
+        <div class="section-label">App</div>
+        <div class="settings-card">
+            <div class="settings-item" onclick="toggleTheme()">
+                <div class="item-icon icon-gray">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 3v2"></path>
+                        <path d="M12 19v2"></path>
+                        <path d="M3 12h2"></path>
+                        <path d="M19 12h2"></path>
+                        <path d="m5.6 5.6 1.4 1.4"></path>
+                        <path d="m17 17 1.4 1.4"></path>
+                        <path d="m5.6 18.4 1.4-1.4"></path>
+                        <path d="m17 7 1.4-1.4"></path>
+                        <circle cx="12" cy="12" r="3.5"></circle>
+                    </svg>
+                </div>
+                <div class="item-text">
+                    <div class="item-title">Dark Mode</div>
+                    <div class="item-desc" id="themeDesc">Light mode is active</div>
+                </div>
+                <span class="item-arrow" id="themeArrow">›</span>
+            </div>
+            <div class="settings-item" onclick="doLogout()">
+                <div class="item-icon icon-gray">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M10 17H6a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h4"></path>
+                        <path d="m14 15 3-3-3-3"></path>
+                        <path d="M17 12H8"></path>
+                    </svg>
+                </div>
+                <div class="item-text">
+                    <div class="item-title">Log Out</div>
+                    <div class="item-desc">Sign out of your account</div>
+                </div>
+                <span class="item-arrow">›</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- LEGAL -->
+    <div class="section">
+        <div class="section-label">Legal</div>
+        <div class="settings-card">
+            <div class="settings-item" onclick="window.location.href='/terms.html'">
+                <div class="item-icon icon-blue">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M8 3h7l5 5v13a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"></path>
+                        <path d="M15 3v5h5"></path>
+                        <path d="M9 13h6"></path>
+                        <path d="M9 17h4"></path>
+                    </svg>
+                </div>
+                <div class="item-text">
+                    <div class="item-title">Terms of Service</div>
+                    <div class="item-desc">Read the terms and conditions</div>
+                </div>
+                <span class="item-arrow">›</span>
+            </div>
+            <div class="settings-item" onclick="window.location.href='/license.html'">
+                <div class="item-icon icon-gray">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M7 3h9l4 4v14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"></path>
+                        <path d="M16 3v4h4"></path>
+                        <path d="M8 11h8"></path>
+                        <path d="M8 15h5"></path>
+                    </svg>
+                </div>
+                <div class="item-text">
+                    <div class="item-title">License</div>
+                    <div class="item-desc">Open the project license</div>
+                </div>
+                <span class="item-arrow">›</span>
+            </div>
+            <div class="settings-item" onclick="window.location.href='/privacy-policy.html'">
+                <div class="item-icon icon-teal">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 3 5 6v5c0 4.2 2.8 7.8 7 10 4.2-2.2 7-5.8 7-10V6l-7-3Z"></path>
+                        <path d="m9.5 12 1.8 1.8 3.2-3.6"></path>
+                    </svg>
+                </div>
+                <div class="item-text">
+                    <div class="item-title">Privacy Policy</div>
+                    <div class="item-desc">Review our privacy practices</div>
+                </div>
+                <span class="item-arrow">›</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUPPORT -->
+    <div class="section">
+        <div class="section-label">Help</div>
+        <div class="settings-card">
+            <div class="settings-item" onclick="window.location.href='/help.html'">
+                <div class="item-icon icon-teal">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M8 9a4 4 0 1 1 8 0c0 2.2-1.2 3.2-2.2 4.1A3 3 0 0 0 12 14.5"></path>
+                        <circle cx="12" cy="17.5" r="0.8"></circle>
+                    </svg>
+                </div>
+                <div class="item-text">
+                    <div class="item-title">TrueVibe Support</div>
+                    <div class="item-desc">TrueVibe help center</div>
+                </div>
+                <span class="item-arrow">›</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- DANGER ZONE -->
+    <div class="section">
+        <div class="section-label">⚠️ Danger Zone</div>
+        <div class="danger-card">
+            <div class="danger-item" onclick="openModal('deleteModal')">
+                <div class="item-icon icon-red">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4 7h16"></path>
+                        <path d="M9 7V4h6v3"></path>
+                        <path d="M7 7l1 13h8l1-13"></path>
+                        <path d="M10 11v5"></path>
+                        <path d="M14 11v5"></path>
+                    </svg>
+                </div>
+                <div class="item-text">
+                    <div class="item-title">Delete Account</div>
+                    <div class="item-desc">Permanently remove your account and all data</div>
+                </div>
+                <span class="item-arrow" style="color:var(--error)">›</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="version-info">
+        TrueVibe web v2.6 · <span id="memberSinceEl"></span>
+    </div>
+</div>
+
+<!-- CHANGE USERNAME MODAL -->
+<div class="modal-overlay" id="usernameModal" onclick="handleOverlayClick(event, 'usernameModal')">
+    <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title">
+            <span class="modal-icon-wrap"><svg class="modal-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4"></path><circle cx="12" cy="8" r="3.5"></circle></svg></span>
+            <span>Change Username</span>
+        </div>
+        <div class="modal-subtitle">Username must be unique, 3–30 characters, letters, numbers and _ only</div>
+        <div class="form-group">
+            <label class="form-label">New Username</label>
+            <input type="text" class="form-input" id="newUsernameInput" placeholder="e.g. cool_user123" maxlength="30" autocomplete="off">
+            <div class="form-error" id="usernameError"></div>
+        </div>
+        <button class="btn btn-primary" id="usernameBtn" onclick="changeUsername()">Save Username</button>
+        <button class="btn btn-ghost" onclick="closeModal('usernameModal')">Cancel</button>
+    </div>
+</div>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div class="modal-overlay" id="passwordModal" onclick="handleOverlayClick(event, 'passwordModal')">
+    <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title">
+            <span class="modal-icon-wrap"><svg class="modal-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg></span>
+            <span>Change Password</span>
+        </div>
+        <div class="modal-subtitle">You must enter your current password to set a new one</div>
+        <div class="form-group">
+            <label class="form-label">Current Password</label>
+            <input type="password" class="form-input" id="currentPasswordInput" placeholder="Current password" autocomplete="current-password">
+            <div class="form-error" id="currentPasswordError"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">New Password</label>
+            <input type="password" class="form-input" id="newPasswordInput" placeholder="Min. 6 characters" autocomplete="new-password">
+            <div class="form-error" id="newPasswordError"></div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Confirm New Password</label>
+            <input type="password" class="form-input" id="confirmPasswordInput" placeholder="Repeat new password" autocomplete="new-password">
+            <div class="form-error" id="confirmPasswordError"></div>
+        </div>
+        <button class="btn btn-primary" id="passwordBtn" onclick="changePassword()">Change Password</button>
+        <button class="btn btn-ghost" onclick="closeModal('passwordModal')">Cancel</button>
+    </div>
+</div>
+
+<!-- PREMIUM MODAL -->
+<div class="modal-overlay" id="premiumModal" onclick="handleOverlayClick(event, 'premiumModal')">
+    <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title" id="premiumModalTitle">
+            <span class="modal-icon-wrap"><svg class="modal-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.5 5 5.5.7-4.2 3.8 1.2 5.5L12 15.7 7 18l1.2-5.5L4 8.7l5.5-.7L12 3Z"></path></svg></span>
+            <span>Premium</span>
+        </div>
+        <div class="modal-subtitle" id="premiumModalSubtitle">Loading...</div>
+        <div class="premium-benefits" id="premiumBenefitsEl">
+            <div class="premium-benefit"><span><svg class="item-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2"></rect><path d="M8 14l2.5-2.5 2 2 3-4"></path></svg></span> <span>Up to 4 images per post</span></div>
+            <div class="premium-benefit"><span><svg class="item-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8h10"></path><path d="M7 12h6"></path><path d="M9 16h4"></path><path d="M5 4h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"></path></svg></span> <span>Unlimited access to RealChat AI</span></div>
+            <div class="premium-benefit"><span><svg class="item-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.5 5 5.5.7-4.2 3.8 1.2 5.5L12 15.7 7 18l1.2-5.5L4 8.7l5.5-.7L12 3Z"></path></svg></span> <span>Gold crown badge next to your name</span></div>
+            <div class="premium-benefit"><span><svg class="item-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3 5 13h5l-1 8 8-10h-5l1-8Z"></path></svg></span> <span>Priority support</span></div>
+        </div>
+        <button class="btn btn-primary" id="premiumActionBtn" onclick="handlePremiumAction()">Loading...</button>
+        <button class="btn btn-ghost" onclick="closeModal('premiumModal')">Cancel</button>
+    </div>
+</div>
+
+<!-- ADVERTISE MODAL -->
+<div class="modal-overlay" id="advertiseModal" onclick="handleOverlayClick(event, 'advertiseModal')">
+    <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title">
+            <span class="modal-icon-wrap"><svg class="modal-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10a2 2 0 0 1 2 2v2l3-2v8l-3-2v2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"></path></svg></span>
+            <span>Advertise</span>
+        </div>
+        <div class="modal-subtitle">Reach thousands of users and grow your audience on TrueVibe</div>
+        <div class="advertise-info">
+            <p><strong>Promote your content, brand, or business</strong> directly to TrueVibe users. Your ad appears in the feed and gets boosted visibility across the platform.</p>
+        </div>
+        <ul class="advertise-features">
+            <li><span><svg class="item-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16"></path><path d="m12 4 8 8-8 8"></path></svg></span> <span>Targeted reach to active users</span></li>
+            <li><span><svg class="item-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V9"></path><path d="M12 19V5"></path><path d="M19 19v-7"></path></svg></span> <span>Boosted feed placement & visibility</span></li>
+            <li><span><svg class="item-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2"></rect><path d="M8 14l2.5-2.5 2 2 3-4"></path></svg></span> <span>Image & text ad formats supported</span></li>
+            <li><span><svg class="item-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V9"></path><path d="M12 19V5"></path><path d="M19 19v-7"></path></svg></span> <span>Real-time performance analytics</span></li>
+            <li><span><svg class="item-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8h10"></path><path d="M7 12h6"></path><path d="M9 16h4"></path><path d="M5 4h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"></path></svg></span> <span>Engage directly with your audience</span></li>
+        </ul>
+        <button class="btn btn-advertise" onclick="goToAdPage()">🚀 Start Advertising</button>
+        <button class="btn btn-ghost" onclick="closeModal('advertiseModal')">Cancel</button>
+    </div>
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="modal-overlay" id="exportModal" onclick="handleOverlayClick(event, 'exportModal')">
+    <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title">
+            <span class="modal-icon-wrap"><svg class="modal-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 19h14"></path></svg></span>
+            <span>Export Data</span>
+        </div>
+        <div class="modal-subtitle">Download a complete archive of your account</div>
+        <div class="export-info">
+            <p>✅ The export contains all your data in JSON format, which you can open in any text editor.</p>
+        </div>
+        <ul class="export-list">
+            <li><span><svg class="item-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4"></path><circle cx="12" cy="8" r="3.5"></circle></svg></span> Account information</li>
+            <li><span><svg class="item-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"></path><path d="M8 8h8"></path><path d="M8 12h8"></path><path d="M8 16h5"></path></svg></span> All your posts</li>
+            <li><span><svg class="item-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-6-4.3-6-9a4 4 0 0 1 7-2.4A4 4 0 0 1 18 11c0 4.7-6 9-6 9Z"></path></svg></span> Likes you have given</li>
+            <li><span><svg class="item-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 17h14"></path><path d="M7 17V9"></path><path d="M12 17V5"></path><path d="M17 17v-3"></path></svg></span> Notification history</li>
+            <li><span><svg class="item-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V9"></path><path d="M12 19V5"></path><path d="M19 19v-7"></path></svg></span> Activity statistics</li>
+        </ul>
+        <button class="btn btn-primary" id="exportBtn" onclick="exportData()">⬇️ Download My Data</button>
+        <button class="btn btn-ghost" onclick="closeModal('exportModal')">Cancel</button>
+    </div>
+</div>
+
+<!-- STATS MODAL -->
+<div class="modal-overlay" id="statsModal" onclick="handleOverlayClick(event, 'statsModal')">
+    <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title">
+            <span class="modal-icon-wrap"><svg class="modal-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V9"></path><path d="M12 19V5"></path><path d="M19 19v-7"></path></svg></span>
+            <span>My Statistics</span>
+        </div>
+        <div class="modal-subtitle">Overview of your activity on TrueVibe</div>
+        <div id="statsDetailEl" style="margin-bottom:20px;"></div>
+        <button class="btn btn-ghost" onclick="closeModal('statsModal')">Close</button>
+    </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal-overlay" id="deleteModal" onclick="handleOverlayClick(event, 'deleteModal')">
+    <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title" style="color:var(--error)">
+            <span class="modal-icon-wrap" style="background:rgba(239,68,68,0.12);color:var(--error)"><svg class="modal-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"></path><path d="M9 7V4h6v3"></path><path d="M7 7l1 13h8l1-13"></path><path d="M10 11v5"></path><path d="M14 11v5"></path></svg></span>
+            <span>Delete Account</span>
+        </div>
+        <div class="modal-subtitle">This action is <strong>irreversible</strong>. All your data will be permanently removed.</div>
+        <div class="delete-warning">
+            <p><strong>What will be deleted:</strong><br>
+            All posts, likes, notifications, images and account data. This process cannot be undone.</p>
+        </div>
+        <div class="checkbox-row" onclick="toggleDeleteCheckbox()">
+            <input type="checkbox" id="deleteConfirmCheck" onclick="event.stopPropagation()">
+            <label for="deleteConfirmCheck">
+                I understand that <strong>all my data will be permanently deleted</strong> and this action cannot be reversed.
+            </label>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Confirm Password to Delete</label>
+            <input type="password" class="form-input" id="deletePasswordInput" placeholder="Your password" autocomplete="current-password">
+            <div class="form-error" id="deletePasswordError"></div>
+        </div>
+        <button class="btn btn-danger" id="deleteBtn" onclick="deleteAccount()" disabled>Permanently Delete Account</button>
+        <button class="btn btn-ghost" onclick="closeModal('deleteModal')">Cancel</button>
+    </div>
+</div>
+
+<div class="toast" id="toastEl"></div>
+
+<script>
+    let currentUser = null;
+    let userStats = null;
+    let isPremium = false;
+
+    (async function init() {
+        applyTheme(localStorage.getItem('theme') ||
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+        await loadUser();
+        await loadStats();
+        
+        // ── NEW AVATAR & STREAK SYSTEM ──: Avatar upload listeners
+        document.getElementById('changeAvatarBtn')?.addEventListener('click', () => {
+            document.getElementById('avatarFileInput').click();
+        });
+        document.getElementById('avatarFileInput')?.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (file.size > 8 * 1024 * 1024) { showToast('Image too large (max 8MB)', 'error'); return; }
+            const formData = new FormData();
+            formData.append('avatar', file);
+            const btn = document.getElementById('changeAvatarBtn');
+            btn.style.opacity = '0.6';
+            try {
+                const res = await fetch('/api/profile/avatar', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    currentUser.avatarUrl = data.avatarUrl;
+                    renderProfile();
+                    showToast('✅ Profile photo updated', 'success');
+                } else { showToast(data.error || 'Upload failed', 'error'); }
+            } catch(err) { showToast('Connection error', 'error'); }
+            btn.style.opacity = '1';
+            e.target.value = '';
+        });
+        // ── END NEW AVATAR & STREAK SYSTEM ──
+    })();
+
+    async function loadUser() {
+        try {
+            const res = await fetch('/api/me');
+            const data = await res.json();
+            if (!data.user) { window.location.href = '/'; return; }
+            currentUser = data.user;
+            isPremium = currentUser.is_premium || false;
+            renderProfile();
+        } catch(e) {
+            showToast('Error loading account', 'error');
+        }
+    }
+
+    async function loadStats() {
+        try {
+            const res = await fetch('/api/settings/stats');
+            if (!res.ok) return;
+            userStats = await res.json();
+            renderStats();
+        } catch(e) {}
+    }
+
+    function renderProfile() {
+        if (!currentUser) return;
+        const name = currentUser.username;
+        // ── NEW AVATAR & STREAK SYSTEM ──: Render avatar if available
+        const avatarEl = document.getElementById('avatarEl');
+        if (currentUser.avatarUrl) {
+            avatarEl.innerHTML = `<img src="${currentUser.avatarUrl + '?t=' + Date.now()}" alt="avatar">`;
+        } else {
+            avatarEl.textContent = name.charAt(0).toUpperCase();
+        }
+        // ── END NEW AVATAR & STREAK SYSTEM ──
+        document.getElementById('profileName').textContent = name;
+        document.getElementById('profileHandle').textContent = '@' + name;
+        document.getElementById('headerSubtitle').textContent = '@' + name;
+        document.getElementById('premiumTagEl').innerHTML = isPremium
+            ? '<div class="premium-tag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.5 5 5.5.7-4.2 3.8 1.2 5.5L12 15.7 7 18l1.2-5.5L4 8.7l5.5-.7L12 3Z"></path></svg> Premium</div>'
+            : '<div class="free-tag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18"></path><path d="M3 12h18"></path></svg> Free</div>';
+        document.getElementById('premiumItemTitle').textContent = isPremium ? 'Manage Premium' : 'Get Premium';
+        document.getElementById('premiumItemDesc').textContent = isPremium
+            ? 'Cancel subscription or view benefits'
+            : 'Unlock all !YEAH features';
+        document.getElementById('premiumItemBadge').className = 'item-badge ' + (isPremium ? 'badge-premium' : 'badge-free');
+        document.getElementById('premiumItemBadge').innerHTML = isPremium
+            ? '<svg viewBox="0 0 24 24" aria-hidden="true" style="width:11px;height:11px;display:inline-block;vertical-align:-1px;margin-right:4px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><path d="m12 3 2.5 5 5.5.7-4.2 3.8 1.2 5.5L12 15.7 7 18l1.2-5.5L4 8.7l5.5-.7L12 3Z"></path></svg>Active'
+            : 'Free';
+        document.getElementById('premiumModalTitle').innerHTML = isPremium
+            ? '<span class="modal-icon-wrap"><svg class="modal-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.5 5 5.5.7-4.2 3.8 1.2 5.5L12 15.7 7 18l1.2-5.5L4 8.7l5.5-.7L12 3Z"></path></svg></span><span>Manage Premium</span>'
+            : '<span class="modal-icon-wrap"><svg class="modal-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.5 5 5.5.7-4.2 3.8 1.2 5.5L12 15.7 7 18l1.2-5.5L4 8.7l5.5-.7L12 3Z"></path></svg></span><span>Get Premium</span>';
+        document.getElementById('premiumModalSubtitle').textContent = isPremium
+            ? 'You have an active Premium plan. You can cancel it below.'
+            : 'Unlock all premium !YEAH features';
+        document.getElementById('premiumActionBtn').textContent = isPremium ? 'Cancel Premium' : 'Purchase Premium';
+        document.getElementById('premiumActionBtn').className = isPremium ? 'btn btn-danger' : 'btn btn-primary';
+    }
+
+    function renderStats() {
+        if (!userStats) return;
+        document.getElementById('statPosts').textContent = userStats.totalPosts ?? '0';
+        document.getElementById('statLikesReceived').textContent = userStats.totalLikesReceived ?? '0';
+        document.getElementById('statReposts').textContent = userStats.totalReposts ?? '0';
+        document.getElementById('statLikesGiven').textContent = userStats.likesGiven ?? '0';
+        if (userStats.memberSince) {
+            document.getElementById('memberSinceEl').textContent = 'Member since ' + userStats.memberSince;
+        }
+        document.getElementById('statsDetailEl').innerHTML = `
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                ${statItem('<svg class="stat-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"></path><path d="M8 8h8"></path><path d="M8 12h8"></path><path d="M8 16h5"></path></svg>', 'Posts', userStats.totalPosts)}
+                ${statItem('<svg class="stat-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-6-4.3-6-9a4 4 0 0 1 7-2.4A4 4 0 0 1 18 11c0 4.7-6 9-6 9Z"></path></svg>', 'Likes Received', userStats.totalLikesReceived)}
+                ${statItem('<svg class="stat-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10"></path><path d="M7 12h10"></path><path d="M7 17h6"></path></svg>', 'Reposts', userStats.totalReposts)}
+                ${statItem('<svg class="stat-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 12h10"></path><path d="m10 8 4 4-4 4"></path></svg>', 'Likes Given', userStats.likesGiven)}
+                ${statItem('<svg class="stat-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M8 2v4"></path><path d="M16 2v4"></path><path d="M4 8h16"></path></svg>', 'Member Since', userStats.memberSince)}
+                ${statItem('<svg class="stat-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.5 5 5.5.7-4.2 3.8 1.2 5.5L12 15.7 7 18l1.2-5.5L4 8.7l5.5-.7L12 3Z"></path></svg>', 'Status', isPremium ? 'Premium' : 'Free')}
+            </div>`;
+    }
+
+    function statItem(icon, label, value) {
+        return `<div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 12px;text-align:center;">
+            <div style="font-size:1.4rem;line-height:1;display:flex;align-items:center;justify-content:center;color:var(--accent);">${icon}</div>
+            <div style="font-size:1.1rem;font-weight:800;color:var(--accent);margin:6px 0 2px;">${value ?? '–'}</div>
+            <div style="font-size:0.72rem;color:var(--text-secondary);font-weight:500;">${label}</div>
+        </div>`;
+    }
+
+    function openModal(id) {
+        document.getElementById(id).classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('open');
+        document.body.style.overflow = '';
+        clearErrors();
+    }
+    function handleOverlayClick(e, id) {
+        if (e.target === document.getElementById(id)) closeModal(id);
+    }
+    function clearErrors() {
+        document.querySelectorAll('.form-error').forEach(el => { el.classList.remove('show'); el.textContent = ''; });
+        document.querySelectorAll('.form-input').forEach(el => el.classList.remove('error'));
+    }
+    function showError(inputId, errorId, msg) {
+        const input = document.getElementById(inputId);
+        const error = document.getElementById(errorId);
+        if (input) input.classList.add('error');
+        if (error) { error.textContent = msg; error.classList.add('show'); }
+    }
+    function openPremiumModal() { openModal('premiumModal'); }
+
+    // Advertise — redirect to ad page
+    function goToAdPage() {
+        showToast('Redirecting to ad platform...', 'info');
+        setTimeout(() => {
+            window.location.href = 'https://vibe.qmay.eu/ad.html';
+        }, 600);
+    }
+
+    async function changeUsername() {
+        clearErrors();
+        const newUsername = document.getElementById('newUsernameInput').value.trim();
+        if (!newUsername) { showError('newUsernameInput', 'usernameError', 'Please enter a new username'); return; }
+        if (newUsername.length < 3) { showError('newUsernameInput', 'usernameError', 'Username must be at least 3 characters'); return; }
+        if (!/^[a-zA-Z0-9_]+$/.test(newUsername)) { showError('newUsernameInput', 'usernameError', 'Letters, numbers and _ only'); return; }
+        if (newUsername === currentUser.username) { showError('newUsernameInput', 'usernameError', 'This is already your current username'); return; }
+        const btn = document.getElementById('usernameBtn');
+        btn.classList.add('btn-loading'); btn.disabled = true;
+        try {
+            const res = await fetch('/api/settings/username', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ newUsername })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                currentUser.username = data.username;
+                renderProfile();
+                closeModal('usernameModal');
+                document.getElementById('newUsernameInput').value = '';
+                showToast('✅ Username updated successfully', 'success');
+            } else { showError('newUsernameInput', 'usernameError', data.error || 'Error'); }
+        } catch(e) { showError('newUsernameInput', 'usernameError', 'Connection error'); }
+        finally { btn.classList.remove('btn-loading'); btn.disabled = false; }
+    }
+
+    async function changePassword() {
+        clearErrors();
+        const current = document.getElementById('currentPasswordInput').value;
+        const newPass = document.getElementById('newPasswordInput').value;
+        const confirm = document.getElementById('confirmPasswordInput').value;
+        let valid = true;
+        if (!current) { showError('currentPasswordInput', 'currentPasswordError', 'Enter your current password'); valid = false; }
+        if (!newPass) { showError('newPasswordInput', 'newPasswordError', 'Enter a new password'); valid = false; }
+        else if (newPass.length < 6) { showError('newPasswordInput', 'newPasswordError', 'Min. 6 characters'); valid = false; }
+        if (!confirm) { showError('confirmPasswordInput', 'confirmPasswordError', 'Confirm your new password'); valid = false; }
+        else if (newPass !== confirm) { showError('confirmPasswordInput', 'confirmPasswordError', 'Passwords do not match'); valid = false; }
+        if (!valid) return;
+        const btn = document.getElementById('passwordBtn');
+        btn.classList.add('btn-loading'); btn.disabled = true;
+        try {
+            const res = await fetch('/api/settings/password', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ currentPassword: current, newPassword: newPass })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                closeModal('passwordModal');
+                document.getElementById('currentPasswordInput').value = '';
+                document.getElementById('newPasswordInput').value = '';
+                document.getElementById('confirmPasswordInput').value = '';
+                showToast('✅ Password changed successfully', 'success');
+            } else { showError('currentPasswordInput', 'currentPasswordError', data.error || 'Error'); }
+        } catch(e) { showError('currentPasswordInput', 'currentPasswordError', 'Connection error'); }
+        finally { btn.classList.remove('btn-loading'); btn.disabled = false; }
+    }
+
+    async function handlePremiumAction() {
+        if (isPremium) {
+            const btn = document.getElementById('premiumActionBtn');
+            btn.classList.add('btn-loading'); btn.disabled = true;
+            try {
+                const res = await fetch('/api/settings/premium', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'cancel' })
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    isPremium = false; currentUser.is_premium = false;
+                    renderProfile(); closeModal('premiumModal');
+                    showToast('Premium cancelled', 'info');
+                }
+            } catch(e) { showToast('Connection error', 'error'); }
+            finally { btn.classList.remove('btn-loading'); btn.disabled = false; }
+        } else {
+            window.location.href = '/buy.html';
+        }
+    }
+
+    async function exportData() {
+        const btn = document.getElementById('exportBtn');
+        btn.classList.add('btn-loading'); btn.disabled = true;
+        try {
+            const res = await fetch('/api/settings/export');
+            if (!res.ok) { showToast('Export failed', 'error'); return; }
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `yeah-export-${currentUser.username}-${Date.now()}.json`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            closeModal('exportModal');
+            showToast('✅ Export downloaded', 'success');
+        } catch(e) { showToast('Export failed', 'error'); }
+        finally { btn.classList.remove('btn-loading'); btn.disabled = false; }
+    }
+
+    function toggleDeleteCheckbox() {
+        const cb = document.getElementById('deleteConfirmCheck');
+        cb.checked = !cb.checked; updateDeleteBtn();
+    }
+    function updateDeleteBtn() {
+        const cb = document.getElementById('deleteConfirmCheck');
+        const pass = document.getElementById('deletePasswordInput').value;
+        document.getElementById('deleteBtn').disabled = !(cb.checked && pass.length > 0);
+    }
+    document.getElementById('deletePasswordInput')?.addEventListener('input', updateDeleteBtn);
+    document.getElementById('deleteConfirmCheck')?.addEventListener('change', updateDeleteBtn);
+
+    async function deleteAccount() {
+        const cb = document.getElementById('deleteConfirmCheck');
+        const password = document.getElementById('deletePasswordInput').value;
+        if (!cb.checked || !password) return;
+        const btn = document.getElementById('deleteBtn');
+        btn.classList.add('btn-loading'); btn.disabled = true;
+        try {
+            const res = await fetch('/api/settings/account', {
+                method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                showToast('Account deleted', 'info');
+                setTimeout(() => { window.location.href = '/'; }, 1500);
+            } else {
+                showError('deletePasswordInput', 'deletePasswordError', data.error || 'Error');
+                btn.classList.remove('btn-loading'); btn.disabled = false;
+            }
+        } catch(e) {
+            showError('deletePasswordInput', 'deletePasswordError', 'Connection error');
+            btn.classList.remove('btn-loading'); btn.disabled = false;
+        }
+    }
+
+    async function doLogout() {
+        await fetch('/api/logout', { method: 'POST' }).catch(() => {});
+        window.location.href = '/';
+    }
+
+    function applyTheme(theme) {
+        const isDark = theme === 'dark';
+        document.body.classList.toggle('dark', isDark);
+        const btn = document.getElementById('themeBtn');
+        if (btn) btn.innerHTML = isDark
+            ? '<svg class="header-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2"></path><path d="M12 19v2"></path><path d="M3 12h2"></path><path d="M19 12h2"></path><path d="m5.6 5.6 1.4 1.4"></path><path d="m17 17 1.4 1.4"></path><path d="m5.6 18.4 1.4-1.4"></path><path d="m17 7 1.4-1.4"></path><circle cx="12" cy="12" r="3.5"></circle></svg>'
+            : '<svg class="header-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"></path></svg>';
+        const desc = document.getElementById('themeDesc');
+        if (desc) desc.textContent = isDark ? 'Dark mode is active' : 'Light mode is active';
+        localStorage.setItem('theme', theme);
+    }
+    function toggleTheme() {
+        const isDark = document.body.classList.contains('dark');
+        applyTheme(isDark ? 'light' : 'dark');
+    }
+    document.getElementById('themeBtn').addEventListener('click', toggleTheme);
+
+    let toastTimer = null;
+    function showToast(message, type = 'success') {
+        const el = document.getElementById('toastEl');
+        el.textContent = message;
+        el.className = `toast ${type} show`;
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal-overlay.open').forEach(m => closeModal(m.id));
+        }
+    });
+
+    document.getElementById('newUsernameInput')?.addEventListener('keypress', e => { if (e.key === 'Enter') changeUsername(); });
+    document.getElementById('confirmPasswordInput')?.addEventListener('keypress', e => { if (e.key === 'Enter') changePassword(); });
+</script>
+</body>
+</html>

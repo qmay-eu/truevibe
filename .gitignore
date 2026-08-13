@@ -1,0 +1,17 @@
+node_modules/
+public/uploads/*
+!public/uploads/.gitkeep
+backup.sql
+log/*.log
+
+# Android
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+android/.idea/
+android/*.iml
+android/.cxx/
+
+#keys
+.env

@@ -1,0 +1,150 @@
+name: TrueVibe Production Deploy
+run-name: Deployment od ${{ gitea.actor }}
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Stiahnutie kodu
+        uses: actions/checkout@v4
+
+      # ── NOVÉ: Záloha starého image pred buildom (pre rollback) ──
+      - name: Záloha starého obrazu
+        run: |
+          if docker image inspect truevibe-app >/dev/null 2>&1; then
+            echo "📦 Zálohujem truevibe-app -> truevibe-app:rollback"
+            docker tag truevibe-app truevibe-app:rollback
+          else
+            echo "ℹ️ Žiadny starý image na zálohu (prvý deploy)"
+          fi
+
+      - name: Build Docker obrazu
+        run: |
+          docker build -t truevibe-app .
+
+      - name: Spustenie kontajnera s health checkom a rollbackom
+        run: |
+          set -e
+          mkdir -p /root/truevibe_data/uploads
+          
+          if [ ! -f /root/truevibe_data/.env ]; then
+            echo "❌ CHYBA: /root/truevibe_data/.env na serveri neexistuje!"
+            echo "Vytvor ho: nano /root/truevibe_data/.env"
+            exit 1
+          fi
+
+          # Funkcia na spustenie kontajnera (aby sme ju mohli použiť aj pri rollbacku)
+          run_container() {
+            local IMAGE=${1:-truevibe-app}
+            docker run -d \
+              --name truevibe-container \
+              --restart always \
+              --network host \
+              --env-file /root/truevibe_data/.env \
+              -e PORT=3001 \
+              -v /root/truevibe_data/uploads:/app/public/uploads \
+              -v /root/truevibe_data/.env:/app/.env:ro \
+              $IMAGE
+          }
+
+          # Funkcia rollback
+          rollback() {
+            echo ""
+            echo "❌ ────────────────────────────────────"
+            echo "❌ DEPLOYMENT ZLYHAL, SPÚŠŤAM ROLLBACK"
+            echo "❌ ────────────────────────────────────"
+            docker logs truevibe-container --tail 150 || true
+            docker stop truevibe-container || true
+            docker rm truevibe-container || true
+            
+            if docker image inspect truevibe-app:rollback >/dev/null 2>&1; then
+              echo "♻️ Obnovujem starý image truevibe-app:rollback -> truevibe-app"
+              docker tag truevibe-app:rollback truevibe-app
+              run_container "truevibe-app"
+              echo "✅ Rollback dokončený, stará verzia beží na :3001"
+            else
+              echo "⚠️ Žiadna záloha neexistuje, nie je čo obnoviť"
+            fi
+            exit 1
+          }
+
+          # 1. Zastav starý kontajner (ale image už máme zazálohovaný)
+          echo "🛑 Zastavujem starý kontajner..."
+          docker stop truevibe-container || true
+          docker rm truevibe-container || true
+          
+          # 2. Spusti nový
+          echo "🚀 Spúšťam nový kontajner truevibe-app..."
+          run_container "truevibe-app"
+
+          echo "⏳ Čakám 5s na štart Node.js..."
+          sleep 5
+
+          # ── VRSTVA 1: Beží kontajner vôbec? ──
+          echo ""
+          echo "🔍 VRSTVA 1/3: Kontajner status"
+          for i in {1..15}; do
+            STATUS=$(docker inspect -f '{{.State.Running}}' truevibe-container 2>/dev/null || echo "false")
+            if [ "$STATUS" = "true" ]; then
+              echo "✅ Kontajner beží"
+              break
+            fi
+            echo "  pokus $i/15 - kontajner ešte nebeží, čakám..."
+            sleep 2
+            if [ $i -eq 15 ]; then
+              echo "❌ Kontajner nenaštartoval"
+              rollback
+            fi
+          done
+
+          # ── VRSTVA 2: Odpovedá web na HTTP? ──
+          echo ""
+          echo "🔍 VRSTVA 2/3: HTTP odpoveď na :3001"
+          for i in {1..20}; do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:3001/ || echo "000")
+            if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "302" ] || [ "$HTTP_CODE" = "301" ]; then
+              echo "✅ Web odpovedá HTTP $HTTP_CODE"
+              break
+            fi
+            echo "  pokus $i/20 - HTTP $HTTP_CODE, čakám 3s..."
+            sleep 3
+            if [ $i -eq 20 ]; then
+              echo "❌ Web neodpovedá"
+              rollback
+            fi
+          done
+
+          # ── VRSTVA 3: Funguje aplikačná logika + DB? ──
+          echo ""
+          echo "🔍 VRSTVA 3/3: Aplikačná logika / API"
+          for i in {1..10}; do
+            # /api/me bez prihlásenia má vrátiť 401 alebo JSON s chybou, nie 500
+            API_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:3001/api/me || echo "000")
+            API_BODY=$(curl -s http://127.0.0.1:3001/api/me || true)
+            
+            # 200, 401, 403 sú OK - znamenajú že Node + DB bežia. 500/502/000 = zle
+            if [ "$API_CODE" = "200" ] || [ "$API_CODE" = "401" ] || [ "$API_CODE" = "403" ]; then
+              echo "✅ API funguje (HTTP $API_CODE) -> $API_BODY"
+              break
+            fi
+            echo "  pokus $i/10 - API HTTP $API_CODE, čakám..."
+            sleep 2
+            if [ $i -eq 10 ]; then
+              echo "❌ API nefunguje / DB down"
+              echo "Response: $API_BODY"
+              rollback
+            fi
+          done
+
+          # Ak sme sa dostali sem, všetko prešlo
+          echo ""
+          echo "🎉 ────────────────────────────────────"
+          echo "🎉 DEPLOYMENT ÚSPEŠNÝ - všetky 3 vrstvy OK"
+          echo "🎉 ────────────────────────────────────"
+          docker rmi truevibe-app:rollback || true
+          docker image prune -f || true

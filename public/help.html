@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>TrueVibe – Help Center</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f5f7fa;
+            --card: #ffffff;
+            --text: #1e2a3a;
+            --text-secondary: #5b6e8c;
+            --border: #e2e8f0;
+            --accent: #1d9bf0;
+            --shadow: 0 4px 12px rgba(0,0,0,0.04);
+            --user-msg: #1d9bf0;
+            --ai-msg: #e9ecef;
+        }
+        body.dark {
+            --bg: #000000;
+            --card: #16181c;
+            --text: #e7e9ea;
+            --text-secondary: #71767b;
+            --border: #2f3336;
+            --accent: #1d9bf0;
+            --shadow: 0 4px 12px rgba(0,0,0,0.3);
+            --user-msg: #1d9bf0;
+            --ai-msg: #2f3336;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            transition: background 0.2s, color 0.2s;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1d9bf0, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .theme-toggle {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .help-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .help-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+        .help-card h3 {
+            margin-bottom: 12px;
+            color: var(--accent);
+        }
+        .help-card p, .help-card li {
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .help-card ul {
+            padding-left: 20px;
+            margin-top: 8px;
+        }
+        .chat-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        .chat-header {
+            background: var(--accent);
+            color: white;
+            padding: 16px 20px;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        .chat-messages {
+            height: 350px;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: var(--bg);
+        }
+        .message {
+            max-width: 80%;
+            padding: 10px 16px;
+            border-radius: 20px;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+        .user-message {
+            align-self: flex-end;
+            background: var(--user-msg);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .ai-message {
+            align-self: flex-start;
+            background: var(--ai-msg);
+            color: var(--text);
+            border-bottom-left-radius: 4px;
+        }
+        .chat-input-area {
+            display: flex;
+            padding: 16px;
+            gap: 12px;
+            border-top: 1px solid var(--border);
+            background: var(--card);
+        }
+        .chat-input-area input {
+            flex: 1;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 12px 16px;
+            font-size: 1rem;
+            color: var(--text);
+        }
+        .chat-input-area button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 40px;
+            padding: 0 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.1s;
+        }
+        .chat-input-area button:active { opacity: 0.8; }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .contact-btn {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+        @media (max-width: 600px) {
+            .container { padding: 16px; }
+            .message { max-width: 90%; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="logo">TrueVibe Help Center</div>
+        <button id="themeToggle" class="theme-toggle">🌙</button>
+    </div>
+
+    <!-- Info cards -->
+    <div class="help-grid">
+        <div class="help-card">
+            <h3>📌 How to use TrueVibe</h3>
+            <ul>
+                <li>Sign up / log in</li>
+                <li>Create a post (text + image)</li>
+                <li>Likes ❤️ and reposts 🔁</li>
+                <li>Notifications – allow them in your browser</li>
+                <li>Switch between dark / light mode</li>
+                <li>Tap an image to view it fullscreen</li>
+            </ul>
+        </div>
+        <div class="help-card">
+            <h3>❓ Common issues</h3>
+            <ul>
+                <li><strong>Forgotten password:</strong> password recovery is not available yet – please contact support.</li>
+                <li><strong>Image won't upload:</strong> max 2 MB, formats JPG / PNG / GIF / WEBP.</li>
+                <li><strong>Notifications not arriving:</strong> enable them in your browser settings.</li>
+                <li><strong>Post not showing up:</strong> refresh the page or check your connection.</li>
+            </ul>
+        </div>
+        <div class="help-card">
+            <h3>⚙️ Tips & tricks</h3>
+            <ul>
+                <li>Use your personalised feed – like what interests you.</li>
+                <li>Repost with a comment – it increases your reach.</li>
+                <li>Upload images in good quality but keep them under 2 MB.</li>
+                <li>If something isn't working, try clearing your cache (CTRL+F5).</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- AI Chat section -->
+    <div class="chat-section">
+        <div class="chat-header">🤖 AI Assistant (Groq) – ask anything</div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message ai-message">Out of service</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Type your question..." autocomplete="off">
+            <button id="sendBtn">Send</button>
+        </div>
+    </div>
+
+    <!-- Contact humans -->
+    <div class="footer">
+        <p>Need help from a real person?</p>
+        <a href="fed.html" class="contact-btn">📞 Contact Support</a>
+    </div>
+</div>
+
+<script>
+    // ---------- Dark mode ----------
+    const themeToggle = document.getElementById('themeToggle');
+    const setTheme = (theme) => {
+        if (theme === 'dark') document.body.classList.add('dark');
+        else document.body.classList.remove('dark');
+        localStorage.setItem('theme', theme);
+        themeToggle.innerText = theme === 'dark' ? '☀️' : '🌙';
+    };
+    const saved = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    setTheme(saved);
+    themeToggle.onclick = () => {
+        const isDark = document.body.classList.contains('dark');
+        setTheme(isDark ? 'light' : 'dark');
+    };
+
+    // ---------- AI chat ----------
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+
+    function addMessage(text, isUser) {
+        const div = document.createElement('div');
+        div.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
+        div.innerText = text;
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    async function sendMessage() {
+        const message = chatInput.value.trim();
+        if (!message) return;
+        addMessage(message, true);
+        chatInput.value = '';
+        // Temporarily disable the button
+        sendBtn.disabled = true;
+        sendBtn.innerText = '...';
+        try {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                addMessage(data.reply, false);
+            } else {
+                addMessage('❌ Error: ' + (data.error || 'Unknown error'), false);
+            }
+        } catch (err) {
+            addMessage('❌ Connection error. Please try again later.', false);
+        } finally {
+            sendBtn.disabled = false;
+            sendBtn.innerText = 'Send';
+        }
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+</script>
+</body>
+</html>
+
