@@ -1,88 +1,13 @@
-================================================================================
-                    LICENČNÁ ZMLUVA S KONCOVÝM POUŽÍVATEĽOM
-                                    (EULA)
-================================================================================
+Copyright 2026 Matias Mikle
 
-Copyright (c) 2026 Matias Mikle [cite: 1]
-All Rights Reserved. [cite: 1]
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-Tento dokument predstavuje právne záväznú licenčnú zmluvu medzi vami (fyzickou
-osobou alebo právnickým subjektom) a autorom softvéru. Inštaláciou, kopírovaním
-alebo iným používaním tohto softvéru potvrdzujete, že ste si túto zmluvu
-prečítali, porozumeli jej a súhlasíte s jej podmienkami.
+    http://www.apache.org/licenses/LICENSE-2.0
 
---------------------------------------------------------------------------------
-1. PREDMET ZMLUVY A VLASTNÍCTVO
---------------------------------------------------------------------------------
-* Tento softvér je vlastníctvom Matiasa Mikleho. [cite: 1]
-* Táto zmluva vám neudeľuje žiadne vlastnícke práva k zdrojovému kódu,
-  štruktúre, dizajnu ani k žiadnemu duševnému vlastníctvu spojenému
-  so softvérom.
-* Softvér a všetky jeho súčasti sú chránené autorskými zákonmi a
-  medzinárodnými dohodami o ochrane autorských práv.
-
---------------------------------------------------------------------------------
-2. UDELENIE LICENCIE
---------------------------------------------------------------------------------
-* Za predpokladu prísneho dodržiavania podmienok tejto zmluvy vám autor
-  udeľuje osobnú, neexkluzívnu a neprenosnú licenciu na používanie tohto
-  softvéru.
-* Licencia sa vzťahuje výhradne na účely, pre ktoré bol softvér originálne
-  navrhnutý a distribuovaný.
-
---------------------------------------------------------------------------------
-3. OBMEDZENIA A ZAKÁZANÉ ČINNOSTI
---------------------------------------------------------------------------------
-* Akékoľvek neoprávnené použitie, kopírovanie alebo distribúcia sú prísne
-  zakázané. [cite: 2]
-* Je výslovne zakázané softvér dekompilovať, modifikovať, spätne analyzovať
-  (reverse engineering) alebo sa iným spôsobom pokúšať získať či odvodiť jeho
-  zdrojový kód.
-* Nesmiete odstraňovať, skrývať ani upravovať žiadne upozornenia o autorských
-  právach alebo ochranných známkach, ktoré sú súčasťou softvéru.
-* Softvér nesmie byť bez výslovného písomného súhlasu autora prenajímaný,
-  sublicencovaný, predávaný ani poskytovaný tretím stranám ako služba (SaaS).
-
---------------------------------------------------------------------------------
-4. UKONČENIE PLATNOSTI
---------------------------------------------------------------------------------
-* Táto licenčná zmluva zostáva v platnosti až do jej formálneho ukončenia.
-* Vaše práva vyplývajúce z tejto zmluvy automaticky a okamžite zaniknú
-  bez predchádzajúceho upozornenia, ak porušíte ktorúkoľvek z tu uvedených
-  podmienok.
-* Pri akomkoľvek ukončení zmluvy ste povinní okamžite zastaviť všetky
-  aktivity spojené s používaním softvéru a trvalo odstrániť všetky jeho
-  kópie z vašich zariadení.
-
---------------------------------------------------------------------------------
-5. VYLÚČENIE ZÁRUK (DISCLAIMER OF WARRANTIES)
---------------------------------------------------------------------------------
-* Softvér je poskytovaný „tak, ako je“ (AS IS) a so všetkými prípadnými
-  chybami.
-* Autor neposkytuje žiadne výslovné ani implicitné záruky, vrátane, ale nie
-  výlučne, záruk predajnosti, vhodnosti na konkrétny účel alebo neporušovania
-  práv tretích strán.
-* Neexistuje žiadna záruka, že funkcie obsiahnuté v softvéri budú spĺňať
-  vaše špecifické požiadavky, alebo že prevádzka softvéru bude neprerušovaná
-  a úplne bezchybná.
-
---------------------------------------------------------------------------------
-6. OBMEDZENIE ZODPOVEDNOSTI (LIMITATION OF LIABILITY)
---------------------------------------------------------------------------------
-* V maximálnom rozsahu povolenom platnými právnymi predpismi nenesie autor
-  v žiadnom prípade zodpovednosť za žiadne priame, nepriame, náhodné,
-  špeciálne, exemplárne alebo následné škody.
-* Toto obmedzenie sa vzťahuje okrem iného na stratu zisku, stratu obchodných
-  príležitostí, stratu dát, prerušenie podnikania alebo iné majetkové a
-  finančné straty, ktoré vzniknú v dôsledku používania alebo neschopnosti
-  používať tento softvér, a to aj v prípade, že autor bol na možnosť
-  takýchto škôd vopred upozornený.
-
---------------------------------------------------------------------------------
-7. ROZHODNÉ PRÁVO A JURISDIKCIA
---------------------------------------------------------------------------------
-* Táto zmluva sa riadi, interpretuje a vykladá výlučne v súlade s platnými
-  právnymi predpismi Slovenskej republiky.
-* Všetky spory, ktoré by mohli vyplynúť z tejto zmluvy alebo v súvislosti
-  s ňou, budú riešené pred vecne a miestne príslušnými súdmi.
-================================================================================
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
